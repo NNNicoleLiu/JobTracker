@@ -1,13 +1,20 @@
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, Box } from "@mui/material";
 
 import Navbar from "../components/Navbar";
+import Summary from "../components/Summary";
 
 const Dashboard = () => {
   return (
-    <>
-      <CssBaseline />
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Navbar />
-    </>
+      <Summary />
+    </Box>
   );
 };
 

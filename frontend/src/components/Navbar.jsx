@@ -36,7 +36,7 @@ const Navbar = () => {
   const clickLogout = () => {};
 
   return (
-    <AppBar position="fixed" color="transparent">
+    <AppBar position="static" color="transparent">
       <Toolbar
         sx={{
           boxSizing: "border-box",
@@ -57,20 +57,27 @@ const Navbar = () => {
             pl: 1,
           }}
         >
-          <Avatar sx={{ width: 50, height: 50, backgroundColor: "#1ccc28" }}>
+          <Avatar
+            sx={{
+              width: 60,
+              height: 60,
+              backgroundColor: "#1ccc28",
+              my: "10px",
+            }}
+          >
             JAT
           </Avatar>
           <Typography
-            variant="h5"
+            variant="h3"
             component="div"
             sx={{
               color: "black",
               fontFamily: "Inder, sans-serif",
-              fontWeight: "bolder",
               pl: "20px",
+              fontSize: "38px",
             }}
           >
-            Job Application Tracker
+            Dashboard
           </Typography>
         </Box>
         <Box>
@@ -80,11 +87,12 @@ const Navbar = () => {
               flexDirection: "row",
               alignItems: "center",
               color: "black",
+              mr: 1,
             }}
             onClick={handleOpenUserMenu}
           >
-            <AccountCircleIcon sx={{ fontSize: 40 }} />
-            <KeyboardArrowDownIcon fontSize="medium" />
+            <AccountCircleIcon sx={{ fontSize: 45 }} />
+            <KeyboardArrowDownIcon sx={{ fontSize: 30 }} />
           </Button>
           <Menu
             sx={{ mt: "45px" }}
