@@ -11,6 +11,7 @@ const Dashboard = () => {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
+        overflowY: "scroll",
       }}
     >
       <Navbar />

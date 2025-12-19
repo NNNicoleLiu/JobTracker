@@ -1,17 +1,22 @@
 import React from "react";
-
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Link from "@mui/material/Link";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 function createData(id, company, position, status, date, link, comment) {
   return { id, company, position, status, date, link, comment };
 }
 
+const setStatusColor = (status) => {
+  const colors = {
+    Applied: "#b8d3ff",
+    Interview: "#ffe5a0",
+    Offer: "#93e3a9",
+    Rejected: "#ffe3dc",
+    Withdrawn: "#c4cad4",
+  };
+  return colors[status];
+};
 const rows = [
   createData(
     "1",
@@ -26,10 +31,37 @@ const rows = [
     "2",
     "Meta",
     "Full-stack Engineer",
-    "Applied",
+    "Rejected",
     "2025-09-24",
     "",
     ""
+  ),
+  createData(
+    "3",
+    "Amazon",
+    "Full-stack Engineer",
+    "Interview",
+    "2025-09-24",
+    "Http://123456789.com",
+    "aaaaaa"
+  ),
+  createData(
+    "3",
+    "Spotify",
+    "Full-stack Engineer",
+    "Withdrawn",
+    "2025-09-24",
+    "Http://123456789.com",
+    "aaaaaa"
+  ),
+  createData(
+    "4",
+    "Miya Studio",
+    "Frontend Engineer",
+    "Offer",
+    "2025-09-24",
+    "Http://123456789.com",
+    "aaaaaa"
   ),
 ];
 
@@ -41,16 +73,17 @@ const Overview = () => {
     maxWidth: "150px",
   };
   return (
-    // <Box sx={{ p: 2, width: "80%", alignContent: "center" }}>
     <>
       <div
         style={{
-          width: "83%",
+          width: "85%",
           margin: "0 auto",
           marginTop: "20px",
           backgroundColor: "#d9d9d9",
           height: "64px",
           borderTop: "1px solid #8F8C8C",
+          display: "flex",
+          flexDirection: "row",
           alignItems: "center",
         }}
       >
@@ -65,12 +98,27 @@ const Overview = () => {
         >
           Application Overview
         </span>
+        <input
+          type="text"
+          id="search"
+          placeholder="Search"
+          style={{
+            width: "68%",
+            height: "40px",
+            display: "inline-block",
+            border: "1px solid #ccc",
+            borderRadius: "20px",
+            margin: "0 30px",
+            padding: "0 20px",
+          }}
+        ></input>
       </div>
 
       <table
         style={{
-          width: "83%",
+          width: "85%",
           margin: "0 auto",
+          marginBottom: "20px",
           borderCollapse: "collapse",
         }}
       >
@@ -85,19 +133,19 @@ const Overview = () => {
             fontSize: "18px",
           }}
         >
-          <th style={{ width: "12%", borderRight: "1px solid #8F8C8C" }}>
+          <th style={{ width: "13%", borderRight: "1px solid #8F8C8C" }}>
             Company
           </th>
           <th style={{ width: "18%", borderRight: "1px solid #8F8C8C" }}>
             Position
           </th>
-          <th style={{ width: "10%", borderRight: "1px solid #8F8C8C" }}>
+          <th style={{ width: "12%", borderRight: "1px solid #8F8C8C" }}>
             Status
           </th>
           <th style={{ width: "12%", borderRight: "1px solid #8F8C8C" }}>
             Date Applied
           </th>
-          <th style={{ width: "18%", borderRight: "1px solid #8F8C8C" }}>
+          <th style={{ width: "20%", borderRight: "1px solid #8F8C8C" }}>
             Link
           </th>
           <th>Comment</th>
@@ -108,16 +156,48 @@ const Overview = () => {
             key={row.id}
             style={{
               borderBottom: "1px solid #8F8C8C",
-              height: "50px",
+              height: "48px",
               alignItems: "center",
               textAlign: "center",
             }}
           >
-            <td style={{ borderRight: "1px solid #8F8C8C" }}>{row.company}</td>
-            <td style={{ borderRight: "1px solid #8F8C8C" }}>{row.position}</td>
-            <td style={{ borderRight: "1px solid #8F8C8C" }}>{row.status}</td>
-            <td style={{ borderRight: "1px solid #8F8C8C" }}>{row.date}</td>
-            <td style={{ borderRight: "1px solid #8F8C8C" }}>{row.link}</td>
+            <td style={{ borderRight: "1px solid #8F8C8C" }}>
+              <Chip
+                label={row.company}
+                sx={{ fontFamily: "Inder, sans-serif", fontSize: "15px" }}
+              />
+            </td>
+            <td style={{ borderRight: "1px solid #8F8C8C" }}>
+              <Chip
+                label={row.position}
+                sx={{ fontFamily: "Inder, sans-serif", fontSize: "15px" }}
+              />
+            </td>
+            <td style={{ borderRight: "1px solid #8F8C8C" }}>
+              <Chip
+                label={row.status}
+                sx={{
+                  fontFamily: "Inder, sans-serif",
+                  fontSize: "15px",
+                  bgcolor: setStatusColor(row.status),
+                }}
+                onClick={() => {}}
+                onDelete={() => {}}
+                deleteIcon={<KeyboardArrowDownIcon fontSize="small" />}
+              />
+            </td>
+            <td style={{ borderRight: "1px solid #8F8C8C" }}>
+              <Chip
+                label={row.date}
+                sx={{ fontFamily: "Inder, sans-serif", fontSize: "15px" }}
+              />
+            </td>
+            <td style={{ borderRight: "1px solid #8F8C8C" }}>
+              <Link href="#" underline="hover">
+                {row.link}
+              </Link>
+              <a></a>
+            </td>
             <td>{row.comment}</td>
           </tr>
         ))}
