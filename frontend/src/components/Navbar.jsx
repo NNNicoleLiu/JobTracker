@@ -74,7 +74,7 @@ const Navbar = () => {
               color: "black",
               fontFamily: "Inder, sans-serif",
               pl: "20px",
-              fontSize: "38px",
+              fontSize: "36px",
             }}
           >
             Dashboard

@@ -6,14 +6,15 @@ import title from "../assets/Title.png";
 
 const StatusDiv = ({ bgColor, status, count }) => {
   const sty = {
-    height: "100px",
+    height: "90px",
     width: "15%",
     minWidth: "150px",
+    maxWidth: "210px",
     backgroundColor: bgColor,
     border: "1px solid black",
     borderColor: bgColor,
     borderRadius: "20px",
-    margin: "10px 20px",
+    margin: "8px 16px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -36,7 +37,7 @@ const StatusDiv = ({ bgColor, status, count }) => {
 const Summary = () => {
   return (
     <>
-      {/* <Box
+      <Box
         sx={{
           display: "flex",
           flexWrap: "wrap",
@@ -71,21 +72,22 @@ const Summary = () => {
         <img
           src={offer}
           alt="Job Offer"
-          style={{ height: "240px", width: "240px", margin: "0 40px" }}
+          style={{ height: "220px", width: "220px", margin: "0 40px" }}
         />
-      </Box> */}
-      <img
+      </Box>
+      {/* <img
         src={title}
         alt="Job Application Tracker"
         style={{ margin: "8px 10%" }}
-      />
+      /> */}
       <Box
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-evenly",
+          justifyContent: "center",
           overflowY: "scroll",
           alignItems: "center",
+          mx: 2,
         }}
       >
         {/* need to update the counts */}
