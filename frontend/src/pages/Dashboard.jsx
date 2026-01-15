@@ -1,3 +1,6 @@
+import React from "react";
+import axios from "axios";
+
 import { CssBaseline, Box } from "@mui/material";
 
 import Navbar from "../components/Navbar";
@@ -5,6 +8,19 @@ import Summary from "../components/Summary";
 import Overview from "../components/Overview";
 
 const Dashboard = () => {
+  const [jobs, setJobs] = React.useState([]);
+
+  React.useEffect(() => {
+    axios
+      .get("http://localhost:8000/jobs/", {
+        headers: {},
+      })
+      .then((response) => {
+        console.log(response);
+        setJobs(response.data);
+      });
+  }, []);
+
   return (
     <Box
       sx={{
@@ -16,7 +32,7 @@ const Dashboard = () => {
     >
       <Navbar />
       <Summary />
-      <Overview />
+      <Overview rows={jobs} />
     </Box>
   );
 };

@@ -4,30 +4,40 @@ import job from "../assets/Jobhunt.png";
 import offer from "../assets/contract.png";
 import title from "../assets/Title.png";
 
-const StatusDiv = ({ bgColor, status, count }) => {
+const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
   const sty = {
-    height: "90px",
-    width: "15%",
+    height: "94px",
+    width: "13.5%",
     minWidth: "150px",
     maxWidth: "210px",
     backgroundColor: bgColor,
-    border: "1px solid black",
-    borderColor: bgColor,
     borderRadius: "20px",
-    margin: "8px 16px",
+    margin: "8px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    color: textColor,
   };
   return (
     <div style={sty}>
       <Typography
         component="div"
-        sx={{ textAlign: "center", fontSize: "28px" }}
+        sx={{
+          textAlign: "center",
+          fontSize: "27px",
+          fontFamily: "Inder, sans-serif",
+        }}
       >
         {status}
       </Typography>
-      <Typography sx={{ textAlign: "center", fontSize: "22px", mt: 1 }}>
+      <Typography
+        sx={{
+          textAlign: "center",
+          fontSize: "24px",
+          mt: 1,
+          fontFamily: "Inder, sans-serif",
+        }}
+      >
         {count}
       </Typography>
     </div>
@@ -91,6 +101,12 @@ const Summary = () => {
         }}
       >
         {/* need to update the counts */}
+        <StatusDiv
+          bgColor="#36454F"
+          textColor="white"
+          status="All"
+          count={10}
+        />
         <StatusDiv bgColor="#b8d3ff" status="Applied" count={10} />
         <StatusDiv bgColor="#ffe5a0" status="Interview" count={2} />
         <StatusDiv bgColor="#93e3a9" status="Offer" count={2} />
