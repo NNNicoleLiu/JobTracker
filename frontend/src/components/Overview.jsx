@@ -29,53 +29,6 @@ const setStatusColor = (status) => {
   };
   return colors[status];
 };
-// const rows = [
-//   createData(
-//     "1",
-//     "Google",
-//     "Software Engineer",
-//     "Applied",
-//     "2025-08-24",
-//     "",
-//     ""
-//   ),
-//   createData(
-//     "2",
-//     "Meta",
-//     "Full-stack Engineer",
-//     "Rejected",
-//     "2025-09-24",
-//     "",
-//     ""
-//   ),
-//   createData(
-//     "3",
-//     "Amazon",
-//     "Full-stack Engineer",
-//     "Interview",
-//     "2025-09-24",
-//     "Http://123456789.com",
-//     "aaaaaa"
-//   ),
-//   createData(
-//     "4",
-//     "Spotify",
-//     "Full-stack Engineer",
-//     "Withdrawn",
-//     "2025-09-24",
-//     "Http://123456789.com",
-//     "aaaaaa"
-//   ),
-//   createData(
-//     "5",
-//     "Miya Studio",
-//     "Frontend Engineer",
-//     "Offer",
-//     "2025-09-24",
-//     "Http://123456789.com",
-//     "aaaaaa"
-//   ),
-// ];
 
 const BORDER = "1px solid #8F8C8C";
 
@@ -118,7 +71,6 @@ const Overview = ({ rows }) => {
       >
         <span
           style={{
-            width: "35%",
             paddingLeft: "30px",
             lineHeight: "64px",
             fontWeight: "bolder",

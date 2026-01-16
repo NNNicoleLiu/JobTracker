@@ -16,7 +16,7 @@ const Dashboard = () => {
         headers: {},
       })
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         setJobs(response.data);
       });
   }, []);
@@ -31,7 +31,7 @@ const Dashboard = () => {
       }}
     >
       <Navbar />
-      <Summary />
+      <Summary rows={jobs} />
       <Overview rows={jobs} />
     </Box>
   );

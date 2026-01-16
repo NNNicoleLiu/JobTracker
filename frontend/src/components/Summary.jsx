@@ -44,7 +44,10 @@ const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
   );
 };
 
-const Summary = () => {
+const Summary = ({ rows }) => {
+  const countStatus = (status) => {
+    return rows.filter((row) => row.status === status).length;
+  };
   return (
     <>
       <Box
@@ -105,13 +108,33 @@ const Summary = () => {
           bgColor="#36454F"
           textColor="white"
           status="All"
-          count={10}
+          count={rows.length}
         />
-        <StatusDiv bgColor="#b8d3ff" status="Applied" count={10} />
-        <StatusDiv bgColor="#ffe5a0" status="Interview" count={2} />
-        <StatusDiv bgColor="#93e3a9" status="Offer" count={2} />
-        <StatusDiv bgColor="#ffe3dc" status="Rejected" count={0} />
-        <StatusDiv bgColor="#c4cad4" status="Withdrawn" count={2} />
+        <StatusDiv
+          bgColor="#b8d3ff"
+          status="Applied"
+          count={countStatus("Applied")}
+        />
+        <StatusDiv
+          bgColor="#ffe5a0"
+          status="Interview"
+          count={countStatus("Interview")}
+        />
+        <StatusDiv
+          bgColor="#93e3a9"
+          status="Offer"
+          count={countStatus("Offer")}
+        />
+        <StatusDiv
+          bgColor="#ffe3dc"
+          status="Rejected"
+          count={countStatus("Rejected")}
+        />
+        <StatusDiv
+          bgColor="#c4cad4"
+          status="Withdrawn"
+          count={countStatus("Withdrawn")}
+        />
       </Box>
     </>
   );

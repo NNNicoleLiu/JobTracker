@@ -1,4 +1,7 @@
 import React from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import {
   Modal,
   Box,
@@ -15,6 +18,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const JobEdit = (props) => {
   console.log(props);
+  const navigate = useNavigate();
   const [formData, setFormData] = React.useState({
     company: "",
     position: "",
@@ -57,8 +61,32 @@ const JobEdit = (props) => {
     });
   };
 
-  const handleSave = () => {
-    handleClose();
+  const handleSave = async () => {
+    let method, url;
+    if (props.editData) {
+      method = "PUT";
+      url = `http://localhost:8000/jobs/${props.editData.id}/`;
+    } else {
+      method = "POST";
+      url = "http://localhost:8000/jobs/";
+    }
+    await axios({
+      url: url,
+      method: method,
+      headers: {
+        // authorization: token,
+      },
+      data: formData,
+    })
+      .then((res) => {
+        alert("Information update successfully!");
+        console.log("Response Data:", res.data);
+        handleClose();
+      })
+      .catch((err) => {
+        alert("Something wrong! Try again!");
+        console.log("Response Data:", res.data);
+      });
   };
 
   const handleClose = () => {
@@ -71,6 +99,7 @@ const JobEdit = (props) => {
       comment: "",
     });
     props.setOpen(false);
+    navigate(0);
   };
 
   return (
