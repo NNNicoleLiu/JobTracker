@@ -12,8 +12,16 @@ import TodayIcon from "@mui/icons-material/Today";
 import LinkIcon from "@mui/icons-material/Link";
 import CommentIcon from "@mui/icons-material/Comment";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import InputBase from "@mui/material/InputBase";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import JobEdit from "./JobEdit";
+import DeleteModal from "./DeleteModal";
+import { Tooltip, Typography } from "@mui/material";
 
 function createData(id, company, position, status, date, link, comment) {
   return { id, company, position, status, date, link, comment };
@@ -40,7 +48,16 @@ const Overview = ({ rows }) => {
     justifyContent: "center",
   };
 
+  const contentStyle = {
+    backgroundColor: "#ebebeb",
+    borderRadius: "20px",
+    width: "fit-content",
+    padding: "6px 12px",
+    margin: "8px",
+  };
   const [openJob, setOpenJob] = React.useState(false);
+  const [openDelete, setOpenDelete] = React.useState(false);
+  const [deleteId, setDeleteId] = React.useState(null);
   const [editData, setEditData] = React.useState(null);
   const [hoveredRow, setHoveredRow] = React.useState(null);
 
@@ -61,17 +78,18 @@ const Overview = ({ rows }) => {
           width: "85%",
           margin: "0 auto",
           marginTop: "20px",
+          padding: "24px",
           backgroundColor: "#d9d9d9",
           height: "64px",
           borderTop: BORDER,
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <span
           style={{
-            paddingLeft: "30px",
             lineHeight: "64px",
             fontWeight: "bolder",
             fontSize: "30px",
@@ -79,26 +97,70 @@ const Overview = ({ rows }) => {
         >
           Application Overview
         </span>
-        <input
-          type="text"
-          id="search"
-          placeholder="Search"
-          style={{
-            width: "68%",
-            height: "40px",
-            display: "inline-block",
-            border: "1px solid #ccc",
-            borderRadius: "20px",
-            margin: "0 30px",
-            padding: "0 20px",
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
-        ></input>
+        >
+          <Tooltip title="Add new job applications" placement="top">
+            <Button
+              variant="contained"
+              startIcon={<AddCircleOutlineIcon />}
+              size="small"
+              sx={{
+                fontFamily: "Inder, sans-serif",
+                fontSize: "15px",
+                px: "10px",
+                mx: 3,
+              }}
+              onClick={clickAdd}
+            >
+              New
+            </Button>
+          </Tooltip>
+          {/* <Tooltip title="Filter" placement="top">
+            <IconButton>
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Sort" placement="top">
+            <IconButton>
+              <SwapVertIcon />
+            </IconButton>
+          </Tooltip> */}
+          <Box
+            component="div"
+            sx={{
+              px: "12px",
+              ml: 1,
+              display: "flex",
+              alignItems: "center",
+              width: 420,
+              height: "40px",
+              borderRadius: "20px",
+              bgcolor: "white",
+            }}
+          >
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder="Search by company or position"
+              inputProps={{ "aria-label": "search google maps" }}
+            />
+            <IconButton type="button" aria-label="search">
+              <SearchIcon />
+            </IconButton>
+          </Box>
+        </Box>
       </div>
 
       <table
         style={{
           width: "85%",
           margin: "0 auto",
+          marginBottom: "20px",
           borderCollapse: "collapse",
         }}
       >
@@ -115,8 +177,9 @@ const Overview = ({ rows }) => {
               alignItems: "center",
             }}
           >
-            <th style={{ width: "13%", borderRight: BORDER }}>
-              <Box sx={boxStyle}>
+            <th style={{ width: "50px" }}></th>
+            <th style={{ width: "14%", borderRight: BORDER }}>
+              <Box sx={{ ...boxStyle, justifyContent: "flex-start" }}>
                 <BusinessIcon /> &nbsp;Company
               </Box>
             </th>
@@ -125,7 +188,7 @@ const Overview = ({ rows }) => {
                 <WorkIcon /> &nbsp;Position
               </Box>
             </th>
-            <th style={{ width: "11.5%", borderRight: BORDER }}>
+            <th style={{ width: "10.5%", borderRight: BORDER }}>
               <Box sx={boxStyle}>
                 <FlagIcon /> &nbsp;Status
               </Box>
@@ -163,7 +226,6 @@ const Overview = ({ rows }) => {
                 key={row[1].id}
                 style={{
                   borderBottom: BORDER,
-                  height: "48px",
                   alignItems: "center",
                   textAlign: "center",
                   cursor: "pointer",
@@ -174,25 +236,32 @@ const Overview = ({ rows }) => {
                 onMouseLeave={() => setHoveredRow(null)}
                 onClick={() => handleClick(row[1])}
               >
-                <td style={{ borderRight: BORDER }}>
-                  <Chip
-                    label={row[1].company}
-                    sx={{
-                      fontFamily: "Inder, sans-serif",
-                      fontSize: "15px",
-                      px: "4px",
-                    }}
-                  />
+                <td>
+                  {hoveredRow === row[1].id && (
+                    <Tooltip title="Delete" placement="left">
+                      <IconButton
+                        sx={{
+                          height: "40px",
+                          width: "40x",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteId(row[1].id);
+                          setOpenDelete(true);
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </td>
+                <td style={{ borderRight: BORDER, overflow: "scroll-x" }}>
+                  <p style={{ ...contentStyle, marginLeft: 0 }}>
+                    {row[1].company}
+                  </p>
                 </td>
                 <td style={{ borderRight: BORDER }}>
-                  <Chip
-                    label={row[1].position}
-                    sx={{
-                      fontFamily: "Inder, sans-serif",
-                      fontSize: "15px",
-                      px: "4px",
-                    }}
-                  />
+                  <p style={contentStyle}>{row[1].position}</p>
                 </td>
                 <td style={{ borderRight: BORDER }}>
                   <Chip
@@ -212,18 +281,25 @@ const Overview = ({ rows }) => {
                   />
                 </td>
                 <td style={{ borderRight: BORDER }}>
-                  <Link href="#" underline="hover">
+                  <Link
+                    href={row[1].link}
+                    target="_blank"
+                    underline="hover"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     {row[1].link}
                   </Link>
                   <a></a>
                 </td>
-                <td>{row[1].comment}</td>
+                <td style={{ padding: "4px" }}> {row[1].comment}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <Box
+      {/* <Box
         sx={{
           width: "85%",
           m: "0 auto",
@@ -242,8 +318,9 @@ const Overview = ({ rows }) => {
           sx={{ fontFamily: "Inder, sans-serif", fontSize: "15px", px: 1 }}
           onClick={clickAdd}
         />
-      </Box>
+      </Box> */}
       <JobEdit open={openJob} setOpen={setOpenJob} editData={editData} />
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} id={deleteId} />
     </>
   );
 };
