@@ -16,7 +16,7 @@ const Dashboard = () => {
         headers: {},
       })
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         setJobs(response.data);
       });
   }, []);

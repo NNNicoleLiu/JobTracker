@@ -220,7 +220,7 @@ const Overview = ({ rows }) => {
         </thead>
         <tbody>
           {Object.entries(rows).map((row, index) => {
-            console.log(row);
+            // console.log(row);
             return (
               <tr
                 key={row[1].id}

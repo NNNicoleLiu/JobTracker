@@ -17,13 +17,13 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 const JobEdit = (props) => {
-  console.log(props);
+  // console.log(props);
   const navigate = useNavigate();
   const [formData, setFormData] = React.useState({
     company: "",
     position: "",
     status: "Applied",
-    applied_at: new Date().toISOString().split("T")[0],
+    applied_at: new Date().toISOString(),
     link: "",
     comment: "",
   });
@@ -31,13 +31,13 @@ const JobEdit = (props) => {
   // Populate form when editing
   React.useEffect(() => {
     if (props.editData) {
+      console.log(props.editData.applied_at);
       setFormData({
         company: props.editData.company || "",
         position: props.editData.position || "",
         status: props.editData.status || "Applied",
         applied_at:
-          props.editData.applied_at.toString().split("T")[0] ||
-          new Date().toISOString().split("T")[0],
+          props.editData.applied_at.toString() || new Date().toISOString(),
         link: props.editData.link || "",
         comment: props.editData.comment || "",
       });
@@ -47,7 +47,7 @@ const JobEdit = (props) => {
         company: "",
         position: "",
         status: "Applied",
-        applied_at: new Date().toISOString().split("T")[0],
+        applied_at: new Date().toISOString(),
         link: "",
         comment: "",
       });
@@ -55,20 +55,31 @@ const JobEdit = (props) => {
   }, [props.editData, props.open]);
 
   const handleChange = (field) => (event) => {
+    let newValue = event.target.value;
+    console.log(field);
+    if (field === "applied_at") {
+      console.log("1111111");
+      newValue =
+        newValue + "T" + props.editData.applied_at.toString().split("T")[1];
+      console.log(newValue);
+    }
     setFormData({
       ...formData,
-      [field]: event.target.value,
+      [field]: newValue,
     });
   };
 
   const handleSave = async () => {
-    let method, url;
+    console.log(formData);
+    let method, url, alertMeg;
     if (props.editData) {
       method = "PUT";
       url = `http://localhost:8000/jobs/${props.editData.id}/`;
+      alertMeg = "Information update successfully!";
     } else {
       method = "POST";
       url = "http://localhost:8000/jobs/";
+      alertMeg = "Information create successfully!";
     }
     await axios({
       url: url,
@@ -79,13 +90,13 @@ const JobEdit = (props) => {
       data: formData,
     })
       .then((res) => {
-        alert("Information update successfully!");
+        alert(alertMeg);
         console.log("Response Data:", res.data);
         handleClose();
       })
       .catch((err) => {
-        alert("Something wrong! Try again!");
-        console.log("Response Data:", res.data);
+        alert(JSON.stringify(err.response.data));
+        console.log("Response Data:", err.response.data);
       });
   };
 
@@ -94,7 +105,7 @@ const JobEdit = (props) => {
       company: "",
       position: "",
       status: "Applied",
-      applied_at: new Date().toISOString().split("T")[0],
+      applied_at: new Date().toISOString(),
       link: "",
       comment: "",
     });
@@ -191,7 +202,7 @@ const JobEdit = (props) => {
           <TextField
             label="Applied Date"
             type="date"
-            value={formData.applied_at}
+            value={formData.applied_at.split("T")[0]}
             onChange={handleChange("applied_at")}
             fullWidth
           />
