@@ -11,12 +11,15 @@ const Dashboard = () => {
   const [jobs, setJobs] = React.useState([]);
 
   React.useEffect(() => {
+    const token = "Token " + localStorage.getItem("token");
     axios
       .get("http://localhost:8000/jobs/", {
-        headers: {},
+        headers: {
+          Authorization: token,
+        },
       })
       .then((response) => {
-        // console.log(response.data);
+        console.log(response.data);
         setJobs(response.data);
       });
   }, []);

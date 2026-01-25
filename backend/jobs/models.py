@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
+
 
 # Create your models here.
 class Jobs(models.Model):
@@ -10,6 +12,13 @@ class Jobs(models.Model):
         ('Rejected', 'Rejected'),
         ('Withdrawn', 'Withdrawn')
     ]
+
+    # Link to user
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='jobs'
+    ) 
 
     position = models.CharField(max_length=200)
     company = models.CharField(max_length=200)
@@ -23,7 +32,7 @@ class Jobs(models.Model):
         ordering = ['-applied_at']
 
     def __str__(self):
-        return f"{self.position} at {self.company}"
+        return f"{self.job_name} at {self.company} - {self.user.username}"
     
 
 

@@ -1,11 +1,6 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-
+from django.urls import path
 from .views import JobViewSet
 
-router = DefaultRouter()
-router.register(r'jobs', JobViewSet)
-
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', JobViewSet.as_view({'get': 'list'})),
 ]

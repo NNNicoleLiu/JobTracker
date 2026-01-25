@@ -19,6 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 const JobEdit = (props) => {
   // console.log(props);
   const navigate = useNavigate();
+  const token = "token " + localStorage.getItem("token");
   const [formData, setFormData] = React.useState({
     company: "",
     position: "",
@@ -58,10 +59,8 @@ const JobEdit = (props) => {
     let newValue = event.target.value;
     console.log(field);
     if (field === "applied_at") {
-      console.log("1111111");
       newValue =
         newValue + "T" + props.editData.applied_at.toString().split("T")[1];
-      console.log(newValue);
     }
     setFormData({
       ...formData,
@@ -70,7 +69,7 @@ const JobEdit = (props) => {
   };
 
   const handleSave = async () => {
-    console.log(formData);
+    // console.log(formData);
     let method, url, alertMeg;
     if (props.editData) {
       method = "PUT";
@@ -85,7 +84,7 @@ const JobEdit = (props) => {
       url: url,
       method: method,
       headers: {
-        // authorization: token,
+        authorization: token,
       },
       data: formData,
     })

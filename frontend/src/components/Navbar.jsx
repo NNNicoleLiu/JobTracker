@@ -1,4 +1,7 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import {
   AppBar,
   Toolbar,
@@ -20,6 +23,7 @@ const settings = ["Profile", "Settings", "Logout"];
 
 const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -33,7 +37,24 @@ const Navbar = () => {
 
   const clickSettings = () => {};
 
-  const clickLogout = () => {};
+  const clickLogout = async () => {
+    const token = "token " + localStorage.getItem("token");
+
+    try {
+      await axios({
+        url: "http://localhost:8000/auth/logout/",
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+      });
+      localStorage.removeItem("token");
+      navigate("/login");
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data);
+    }
+  };
 
   return (
     <AppBar position="static" color="transparent">

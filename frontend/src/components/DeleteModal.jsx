@@ -21,12 +21,14 @@ const style = {
 
 const DeleteModal = (props) => {
   const navigate = useNavigate();
+  const token = "token " + localStorage.getItem("token");
+
   const clickYes = async () => {
     await axios({
       url: `http://localhost:8000/jobs/${props.id}/`,
       method: "DELETE",
       headers: {
-        // authorization: token,
+        Authorization: token,
       },
     })
       .then((res) => {
