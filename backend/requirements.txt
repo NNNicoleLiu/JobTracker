@@ -1,4 +1,9 @@
 django
 djangorestframework
 django-cors-headers
-gunicorn==21.2.0
+gunicorn
+django-allauth
+dj-rest-auth
+requests
+PyJWT
+cryptography

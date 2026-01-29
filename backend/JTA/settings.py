@@ -45,9 +45,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+
+    # Django Allauth
+    'django.contrib.sites',  # Required by allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',  # Google provider
+    
+    # dj-rest-auth
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+
+    # apps
     'jobs',
     'users'
-
 ]
 
 MIDDLEWARE = [
@@ -59,6 +71,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'JTA.urls'
@@ -82,10 +96,12 @@ WSGI_APPLICATION = 'JTA.wsgi.application'
 
 # CORS settings for development
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
 ]
 # default port number if use vite to create React app
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -97,12 +113,16 @@ DATABASES = {
     }
 }
 
+# Site ID (required by django-allauth)
+SITE_ID = 1
+
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
 
 # Authentication Backend (for email login)
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend', # email password
+    'allauth.account.auth_backends.AuthenticationBackend',  # OAuth
 ]
 
 # REST Framework settings
@@ -160,3 +180,31 @@ STATIC_URL = 'static/'
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 #     'PAGE_SIZE': 50
 # }
+
+# Django Allauth Configuration
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Change to 'mandatory' for email verification
+
+# Social Account Configuration
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+            'openid',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'VERIFIED_EMAIL': False,  # Add this
+        'VERSION': 'v2',  # Add this - use v2 API
+    }
+}
+
+# Redirect URLs after social login
+SOCIALACCOUNT_LOGIN_ON_GET = True
+LOGIN_REDIRECT_URL = 'http://localhost:8000/auth/google/callback/' # Your frontend URL
+ACCOUNT_LOGOUT_REDIRECT_URL = 'http://localhost:8000/accounts/'

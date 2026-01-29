@@ -4,9 +4,46 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, get_user_model
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+from rest_framework.authtoken.models import Token
+from rest_framework import status
+
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 
 User = get_user_model()
+
+class GoogleLogin(SocialLoginView):
+    """
+    API endpoint for Google login
+    POST /auth/google/
+    Body: { "access_token": "google_access_token" }
+    Response: { "token": "your_token", "user": {...} }
+    """
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "http://localhost:5173"
+    client_class = OAuth2Client
+    
+    def post(self, request, *args, **kwargs):
+        # Call parent method to handle Google OAuth
+        response = super().post(request, *args, **kwargs)
+        
+        # Customize response
+        if response.status_code == 200:
+            user = self.user
+            
+            # Get or create token
+            token, created = Token.objects.get_or_create(user=user)
+            
+            # Return custom response with token
+            return Response({
+                'token': token.key,
+                'user': UserSerializer(user).data,
+                'message': 'Google login successful'
+            }, status=status.HTTP_200_OK)
+        
+        return response
 
 
 class RegisterView(generics.CreateAPIView):
