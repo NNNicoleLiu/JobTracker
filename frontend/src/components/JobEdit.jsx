@@ -65,10 +65,9 @@ const JobEdit = (props) => {
 
   const handleChange = (field) => (event) => {
     let newValue = event.target.value;
-    console.log(field);
+    // console.log(field);
     if (field === "applied_at") {
-      newValue =
-        newValue + "T" + props.editData.applied_at.toString().split("T")[1];
+      newValue = newValue + "T" + formData.applied_at.toString().split("T")[1];
     }
     setFormData({
       ...formData,
@@ -97,7 +96,7 @@ const JobEdit = (props) => {
       data: formData,
     })
       .then((res) => {
-        alert(alertMeg);
+        // alert(alertMeg);
         console.log("Response Data:", res.data);
         handleClose();
       })

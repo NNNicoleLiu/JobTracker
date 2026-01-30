@@ -1,8 +1,6 @@
 import React from "react";
-import Chip from "@mui/material/Chip";
-import Link from "@mui/material/Link";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+
+import { Chip, Link, Button, Box, Tooltip, Typography } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -21,11 +19,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import JobEdit from "./JobEdit";
 import DeleteModal from "./DeleteModal";
-import { Tooltip, Typography } from "@mui/material";
-
-function createData(id, company, position, status, date, link, comment) {
-  return { id, company, position, status, date, link, comment };
-}
 
 const setStatusColor = (status) => {
   const colors = {
@@ -55,11 +48,46 @@ const Overview = ({ rows }) => {
     padding: "6px 12px",
     margin: "8px",
   };
+  const [filterRows, setFilterRows] = React.useState([]);
   const [openJob, setOpenJob] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
   const [deleteId, setDeleteId] = React.useState(null);
   const [editData, setEditData] = React.useState(null);
   const [hoveredRow, setHoveredRow] = React.useState(null);
+
+  const [searchTerm, setSearchTerm] = React.useState("");
+
+  // React.useEffect(() => {
+  //   setFilterRows(rows);
+  // }, [rows]);
+  React.useEffect(() => {
+    const filtered = filteredApp(rows, searchTerm);
+    setFilterRows(filtered);
+  }, [searchTerm, rows]);
+
+  const filteredApp = (rows, searchTerm) => {
+    // Return all if search term is empty
+    if (!searchTerm || searchTerm.trim() === "") {
+      return rows;
+    }
+
+    // Convert search term to lowercase for case-insensitive search
+    const search = searchTerm.toLowerCase().trim();
+
+    // Filter applications
+    return rows.filter((app) => {
+      const company = app.company?.toLowerCase() || "";
+      const position = app.position?.toLowerCase() || "";
+
+      // Return true if search term found in company OR position
+      return company.includes(search) || position.includes(search);
+    });
+  };
+
+  const clickSearch = () => {
+    const filtered = filteredApp(rows, searchTerm);
+    setFilterRows(filtered);
+  };
 
   const clickAdd = () => {
     setEditData(null);
@@ -147,10 +175,11 @@ const Overview = ({ rows }) => {
             <InputBase
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search by company or position"
-              inputProps={{ "aria-label": "search google maps" }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
             <IconButton type="button" aria-label="search">
-              <SearchIcon />
+              <SearchIcon onClick={() => clickSearch(rows, searchTerm)} />
             </IconButton>
           </Box>
         </Box>
@@ -219,7 +248,7 @@ const Overview = ({ rows }) => {
           </tr>
         </thead>
         <tbody>
-          {Object.entries(rows).map((row, index) => {
+          {Object.entries(filterRows).map((row, index) => {
             // console.log(row);
             return (
               <tr
