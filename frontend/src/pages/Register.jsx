@@ -14,18 +14,27 @@ import EmailIcon from "@mui/icons-material/Email";
 import LoginGoogle from "../components/LoginGoogle";
 import Password from "../components/Password";
 
-// import AlertMsg from '../components/Alert';
+import AlertMsg from "../components/Alertmsg";
 
 const Register = () => {
+  const navigate = useNavigate();
+
+  const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [password2, setPassword2] = React.useState("");
-  const [name, setName] = React.useState("");
+
+  // check input error
   const [nameError, setNameError] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
-  const [registerError, setRegisterError] = React.useState(false);
-  const navigate = useNavigate();
+  const [matchError, setMatchError] = React.useState(false);
+
+  const [nameMsg, setNameMsg] = React.useState([]);
+  const [emailMsg, setEmailMsg] = React.useState([]);
+  const [passwordMsg, setPasswordMsg] = React.useState([]);
+
+  // password visibility
   const [showPassword, setShowPassword] = React.useState(false);
   const [showPassword2, setShowPassword2] = React.useState(false);
   const [emailRegister, setEmailRegister] = React.useState(false);
@@ -33,30 +42,10 @@ const Register = () => {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
 
-  const checkName = (name) => {
-    if (!name.target.value) {
-      setNameError(true);
-      error.current = "Name cannot be empty!";
-    } else {
-      setNameError(false);
-    }
-  };
-
-  const checkEmail = (email) => {
-    const emailPattern = /^.+@.+\..+/;
-    if (!email.target.value || !emailPattern.test(email.target.value)) {
-      setEmailError(true);
-      error.current = "Invalid email format!";
-      alert("Invalid email format! Example: abc@example.com");
-    } else {
-      setEmailError(false);
-    }
-  };
-
   const register = async () => {
     if (password !== password2) {
-      alert("Passwords do not match! Please check again!");
-      setPasswordError(true);
+      // error.current = "Passwords do not match! Please check again!";
+      setMatchError(true);
     } else {
       try {
         const response = await axios.post(
@@ -73,8 +62,22 @@ const Register = () => {
       } catch (err) {
         // error.current = err.response.data.error;
         console.log(err.response.data);
-        alert(JSON.stringify(err.response.data));
-        setRegisterError(true);
+        // alert(JSON.stringify(err.response.data));
+        if (err.response.data.name) {
+          setNameError(true);
+          setNameMsg(err.response.data.name);
+          console.log(nameMsg);
+        }
+        if (err.response.data.email) {
+          setEmailError(true);
+          setEmailMsg(err.response.data.email);
+          console.log(emailMsg);
+        }
+        if (err.response.data.password) {
+          setPasswordError(true);
+          setPasswordMsg(err.response.data.password);
+          console.log(passwordMsg);
+        }
       }
     }
   };
@@ -128,9 +131,11 @@ const Register = () => {
               type="text"
               onChange={(e) => setName(e.target.value)}
               value={name}
-              // onBlur={checkName}
+              onFocus={() => setNameError(false)}
             />
-            {/* {nameError && <AlertMsg msg={error.current} closeAlert = {() => setNameError(false)} />} */}
+            {nameError && (
+              <AlertMsg msg={nameMsg} closeAlert={() => setNameError(false)} />
+            )}
             <TextField
               margin="normal"
               required
@@ -138,9 +143,14 @@ const Register = () => {
               label="Email Address"
               onChange={(e) => setEmail(e.target.value)}
               value={email}
-              // onBlur={checkEmail}
+              onFocus={() => setEmailError(false)}
             />
-            {/* {emailError && <AlertMsg msg={error.current} closeAlert = {() => setEmailError(false)} />} */}
+            {emailError && (
+              <AlertMsg
+                msg={emailMsg}
+                closeAlert={() => setEmailError(false)}
+              />
+            )}
             <Password
               showPassword={showPassword}
               setShowPassword={setShowPassword}
@@ -148,7 +158,15 @@ const Register = () => {
               password={password}
               setPassword={setPassword}
               label={"Password"}
+              setError={setPasswordError}
             />
+            {passwordError && (
+              <AlertMsg
+                msg={passwordMsg}
+                closeAlert={() => setPasswordError(false)}
+              />
+            )}
+
             <Password
               showPassword={showPassword2}
               setShowPassword={setShowPassword2}
@@ -156,8 +174,14 @@ const Register = () => {
               password={password2}
               setPassword={setPassword2}
               label={"Confirm Password"}
+              setError={setMatchError}
             />
-            {/* {passwordError && <AlertMsg msg='Password does not match! Check again!' closeAlert = {() => setPasswordError(false)} />} */}
+            {matchError && (
+              <AlertMsg
+                msg={["Password does not match! Check again!"]}
+                closeAlert={() => setMatchError(false)}
+              />
+            )}
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -176,7 +200,7 @@ const Register = () => {
         {/* {registerError && <AlertMsg msg={error.current} closeAlert = {() => setRegisterError(false)} />} */}
         <Divider sx={{ my: 3, fontSize: "15px", color: "grey" }}>OR</Divider>
         <LoginGoogle />
-        <p style={{ margin: "auto", fontSize: "16px" }}>
+        <p style={{ margin: "auto", fontSize: "16px", marginBottom: "40px" }}>
           Already have an account?
           <Link to="/login" style={{ paddingLeft: "8px" }}>
             Login

@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
+import AlertMsg from "./Alertmsg";
+
 const JobEdit = (props) => {
   // console.log(props);
   const navigate = useNavigate();
@@ -28,6 +30,12 @@ const JobEdit = (props) => {
     link: "",
     comment: "",
   });
+
+  // handle input error
+  const [positionError, setPositionError] = React.useState(false);
+  const [companyError, setCompanyError] = React.useState(false);
+  const [positionMsg, setPositionMsg] = React.useState([]);
+  const [companyMsg, setCompanyMsg] = React.useState([]);
 
   // Populate form when editing
   React.useEffect(() => {
@@ -94,8 +102,18 @@ const JobEdit = (props) => {
         handleClose();
       })
       .catch((err) => {
-        alert(JSON.stringify(err.response.data));
+        // alert(JSON.stringify(err.response.data));
         console.log("Response Data:", err.response.data);
+        if (err.response.data.company) {
+          setCompanyError(true);
+          setCompanyMsg(err.response.data.company);
+          console.log(companyMsg);
+        }
+        if (err.response.data.position) {
+          setPositionError(true);
+          setPositionMsg(err.response.data.position);
+          console.log(positionMsg);
+        }
       });
   };
 
@@ -157,7 +175,7 @@ const JobEdit = (props) => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 2.5,
+            gap: 2,
             fontFamily: "Inder, sans-serif",
           }}
         >
@@ -169,8 +187,14 @@ const JobEdit = (props) => {
             fullWidth
             required
             variant="outlined"
+            onFocus={() => setCompanyError(false)}
           />
-
+          {companyError && (
+            <AlertMsg
+              msg={companyMsg}
+              closeAlert={() => setCompanyError(false)}
+            />
+          )}
           {/* Position */}
           <TextField
             label="Position"
@@ -179,8 +203,14 @@ const JobEdit = (props) => {
             fullWidth
             required
             variant="outlined"
+            onFocus={() => setPositionError(false)}
           />
-
+          {positionError && (
+            <AlertMsg
+              msg={positionMsg}
+              closeAlert={() => setPositionError(false)}
+            />
+          )}
           {/* Status */}
           <FormControl fullWidth>
             <InputLabel>Status</InputLabel>

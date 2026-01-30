@@ -13,17 +13,21 @@ import EmailIcon from "@mui/icons-material/Email";
 
 import LoginGoogle from "../components/LoginGoogle";
 import Password from "../components/Password";
+import AlertMsg from "../components/Alertmsg";
 
 const Login = () => {
   const navigate = useNavigate();
   // const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  // const [loginError, setLoginError] = React.useState(false);
-  // const error = React.useRef("");
 
-  const [emailLogin, setEmailLogin] = React.useState(false);
+  // login error
+  const [emailError, setEmailError] = React.useState(false);
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [emailMsg, setEmailMsg] = React.useState([]);
+  const [passwordMsg, setPasswordMsg] = React.useState([]);
 
+  // password visibility
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -31,6 +35,9 @@ const Login = () => {
   // if (localStorage.getItem("token")) {
   //   return <Navigate to="/dashboard" />;
   // }
+
+  // login by email
+  const [emailLogin, setEmailLogin] = React.useState(false);
 
   const LoginEmail = async () => {
     try {
@@ -43,9 +50,19 @@ const Login = () => {
     } catch (err) {
       // error.current = err.response.data.error;
       console.log(err);
-      // alert(error.current);
-      alert(err.response.data.error);
+      // // alert(error.current);
+      // alert(err.response.data.error);
       // setLoginError(true);
+      if (err.response.data.email) {
+        setEmailError(true);
+        setEmailMsg(err.response.data.email);
+        console.log(emailMsg);
+      }
+      if (err.response.data.error) {
+        setPasswordError(true);
+        setPasswordMsg([err.response.data.error]);
+        console.log(passwordMsg);
+      }
     }
   };
 
@@ -100,19 +117,14 @@ const Login = () => {
               autoComplete="email"
               onChange={(e) => setEmail(e.target.value)}
               value={email}
+              onFocus={() => setEmailError(false)}
             />
-            {/* <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-            /> */}
+            {emailError && (
+              <AlertMsg
+                msg={emailMsg}
+                closeAlert={() => setEmailError(false)}
+              />
+            )}
             <Password
               showPassword={showPassword}
               setShowPassword={setShowPassword}
@@ -120,7 +132,15 @@ const Login = () => {
               password={password}
               setPassword={setPassword}
               label={"Password"}
+              setError={setPasswordError}
             />
+            {passwordError && (
+              <AlertMsg
+                msg={passwordMsg}
+                closeAlert={() => setPasswordError(false)}
+              />
+            )}
+
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"

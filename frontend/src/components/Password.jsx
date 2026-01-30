@@ -11,7 +11,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const Password = (props) => {
-  // props: showPassword, setShowPassword, handleClickShowPassword, password, setPassword, label
+  // props: showPassword, setShowPassword, handleClickShowPassword, password, setPassword, label, setError
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -47,6 +47,7 @@ const Password = (props) => {
         label={props.label}
         onChange={(e) => props.setPassword(e.target.value)}
         value={props.password}
+        onFocus={() => props.setError(false)}
       />
     </FormControl>
   );
