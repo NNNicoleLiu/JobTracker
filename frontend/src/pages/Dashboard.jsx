@@ -7,29 +7,23 @@ import { Box } from "@mui/material";
 import Navbar from "../components/Navbar";
 import Summary from "../components/Summary";
 import Overview from "../components/Overview";
+import api from "../utils/api";
 
 const Dashboard = () => {
   const [jobs, setJobs] = React.useState([]);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    if (localStorage.getItem("token")) {
-      const token = "Token " + localStorage.getItem("token");
-      console.log(token);
-      axios
-        .get("http://localhost:8000/jobs/", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          setJobs(response.data);
-        });
-    } else {
-      console.log("no token");
-      navigate("/login");
+  const fetchApplications = async () => {
+    try {
+      const response = await api.get("/jobs/");
+      setJobs(response.data);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
     }
+  };
+
+  React.useEffect(() => {
+    fetchApplications();
   }, []);
 
   return (
@@ -42,7 +36,7 @@ const Dashboard = () => {
       }}
     >
       <Navbar />
-      <Summary rows={jobs} />
+      <Summary rows={jobs} setRows={setJobs} />
       <Overview rows={jobs} />
     </Box>
   );

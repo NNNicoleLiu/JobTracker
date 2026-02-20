@@ -1,6 +1,7 @@
 import React from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+import api from "../utils/api";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -21,26 +22,18 @@ const style = {
 
 const DeleteModal = (props) => {
   const navigate = useNavigate();
-  const token = "token " + localStorage.getItem("token");
 
   const clickYes = async () => {
-    await axios({
-      url: `http://localhost:8000/jobs/${props.id}/`,
-      method: "DELETE",
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((res) => {
-        alert("Information delete successfully!");
-        console.log("Response Data:", res.data);
-        props.setOpen(false);
-        navigate(0);
-      })
-      .catch((err) => {
-        alert("Something wrong! Try again!");
-        console.log("Response Data:", res.data);
-      });
+    try {
+      const response = await api.delete(`/jobs/${props.id}/`);
+      alert("Information delete successfully!");
+      console.log("Response Data:", response.data);
+      props.setOpen(false);
+      navigate(0);
+    } catch (err) {
+      alert("Something wrong! Try again!");
+      console.log("Response Data:", res.data);
+    }
   };
   const clickNo = () => props.setOpen(false);
   return (

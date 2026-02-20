@@ -1,6 +1,7 @@
 import React from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+import api from "../utils/api";
 
 import {
   Modal,
@@ -21,7 +22,6 @@ import AlertMsg from "./Alertmsg";
 const JobEdit = (props) => {
   // console.log(props);
   const navigate = useNavigate();
-  const token = "token " + localStorage.getItem("token");
   const [formData, setFormData] = React.useState({
     company: "",
     position: "",
@@ -77,43 +77,28 @@ const JobEdit = (props) => {
 
   const handleSave = async () => {
     // console.log(formData);
-    let method, url, alertMeg;
-    if (props.editData) {
-      method = "PUT";
-      url = `http://localhost:8000/jobs/${props.editData.id}/`;
-      alertMeg = "Information update successfully!";
-    } else {
-      method = "POST";
-      url = "http://localhost:8000/jobs/";
-      alertMeg = "Information create successfully!";
+    try {
+      if (props.editData) {
+        const response = await api.put(`/jobs/${props.editData.id}/`, formData);
+        console.log("Edit job:", response.data);
+      } else {
+        const response = await api.post("/jobs/", formData);
+        console.log("Create job:", response.data);
+      }
+      handleClose();
+    } catch (err) {
+      console.log("Response Data:", err.response.data);
+      if (err.response.data.company) {
+        setCompanyError(true);
+        setCompanyMsg(err.response.data.company);
+        console.log(companyMsg);
+      }
+      if (err.response.data.position) {
+        setPositionError(true);
+        setPositionMsg(err.response.data.position);
+        console.log(positionMsg);
+      }
     }
-    await axios({
-      url: url,
-      method: method,
-      headers: {
-        authorization: token,
-      },
-      data: formData,
-    })
-      .then((res) => {
-        // alert(alertMeg);
-        console.log("Response Data:", res.data);
-        handleClose();
-      })
-      .catch((err) => {
-        // alert(JSON.stringify(err.response.data));
-        console.log("Response Data:", err.response.data);
-        if (err.response.data.company) {
-          setCompanyError(true);
-          setCompanyMsg(err.response.data.company);
-          console.log(companyMsg);
-        }
-        if (err.response.data.position) {
-          setPositionError(true);
-          setPositionMsg(err.response.data.position);
-          console.log(positionMsg);
-        }
-      });
   };
 
   const handleClose = () => {

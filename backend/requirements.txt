@@ -7,3 +7,12 @@ dj-rest-auth
 requests
 PyJWT
 cryptography
+
+# PostgreSQL
+psycopg2-binary
+
+# JWT Authentication
+djangorestframework-simplejwt
+
+# Environment variables
+python-decouple
