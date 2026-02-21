@@ -11,10 +11,9 @@ const LoginGoogle = () => {
   const loginGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       console.log("Google token response:", tokenResponse);
-      // setLoading(true);
 
       try {
-        // Send access_token to Django backend
+        // Send access_token to backend
         const response = await axios.post(
           "http://localhost:8000/auth/google/",
           {
@@ -22,13 +21,12 @@ const LoginGoogle = () => {
           }
         );
 
-        // console.log("Django response:", response.data);
+        console.log("response:", response.data);
 
-        // Get token and user from Django
-        const { token, user } = response.data;
+        const { access, refresh } = response.data;
 
-        // Store token and user info
-        localStorage.setItem("token", token);
+        localStorage.setItem("access_token", access);
+        localStorage.setItem("refresh_token", refresh);
 
         // Redirect to dashboard
         navigate("/dashboard");
@@ -38,8 +36,6 @@ const LoginGoogle = () => {
           "Google login failed: " +
             (error.response?.data?.detail || "Unknown error")
         );
-      } finally {
-        setLoading(false);
       }
     },
     onError: (error) => {

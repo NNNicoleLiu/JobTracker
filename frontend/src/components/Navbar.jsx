@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 
 import {
   AppBar,
@@ -38,21 +38,27 @@ const Navbar = () => {
   const clickSettings = () => {};
 
   const clickLogout = async () => {
-    const token = "token " + localStorage.getItem("token");
-
     try {
-      await axios({
-        url: "http://localhost:8000/auth/logout/",
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-      });
-      localStorage.removeItem("token");
+      const refreshToken = localStorage.getItem("refresh_token");
+
+      if (refreshToken) {
+        // Blacklist refresh token
+        await api.post("/auth/logout/", {
+          refresh: refreshToken,
+        });
+      }
+
+      // Clear storage
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
       navigate("/login");
     } catch (err) {
-      console.log(err);
+      console.error("Logout error:", err);
       alert(err.response.data);
+      // Clear storage anyway
+      localStorage.clear();
+      navigate("/login");
     }
   };
 

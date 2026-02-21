@@ -45,7 +45,13 @@ const Login = () => {
         email,
         password,
       });
-      localStorage.setItem("token", response.data.token);
+      const { access, refresh, user } = response.data;
+
+      // Store JWT tokens (CHANGED from 'token')
+      localStorage.setItem("access_token", access);
+      localStorage.setItem("refresh_token", refresh);
+      localStorage.setItem("user", JSON.stringify(user));
+
       navigate("/dashboard");
     } catch (err) {
       // error.current = err.response.data.error;
