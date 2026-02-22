@@ -23,17 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#_4$k-=^!qhz81y+zsyojr63@(lv_i5m9^i_cb!q7a-$g#w6*a'
+# SECRET_KEY = 'django-insecure-#_4$k-=^!qhz81y+zsyojr63@(lv_i5m9^i_cb!q7a-$g#w6*a'
+SECRET_KEY = config('SECRET_KEY', default='your-secret-key-change-in-production')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0',
-    'backend',  # Docker service name
-]
+# ALLOWED_HOSTS = [
+#     'localhost',
+#     '127.0.0.1',
+#     '0.0.0.0',
+#     'backend',  # Docker service name
+# ]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -115,7 +118,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DB_NAME', default='job_tracker_db'),
         'USER': config('DB_USER', default='job_tracker_user'),
-        'PASSWORD': config('DB_PASSWORD', default='secure_password_123'),
+        'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST', default='localhost'),
         'PORT': config('DB_PORT', default='5432'),
     }

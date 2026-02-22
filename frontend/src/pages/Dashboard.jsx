@@ -36,7 +36,8 @@ const Dashboard = () => {
       }}
     >
       <Navbar />
-      <Summary rows={jobs} setRows={setJobs} />
+      {/* need to implement filter by status in summary */}
+      <Summary rows={jobs} />
       <Overview rows={jobs} />
     </Box>
   );
