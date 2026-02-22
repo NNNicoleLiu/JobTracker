@@ -1,6 +1,18 @@
-version: "3.8"
-
 services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: job_tracker_db
+    environment:
+      POSTGRES_DB: job_tracker_db
+      POSTGRES_USER: job_tracker_user
+      POSTGRES_PASSWORD: secure_password_123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - job_tracker_network
   # Django Backend
   backend:
     build:
@@ -9,14 +21,20 @@ services:
     container_name: job_tracker_backend
     command: >
       sh -c "python manage.py migrate &&
+             python manage.py loaddata fixtures/socialapp.json &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
     environment:
-      - DEBUG=1
-      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,backend
+      - DB_NAME=job_tracker_db
+      - DB_USER=job_tracker_user
+      - DB_PASSWORD=secure_password_123
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
     networks:
       - job_tracker_network
 
@@ -39,6 +57,9 @@ services:
       - job_tracker_network
     stdin_open: true
     tty: true
+
+volumes:
+  postgres_data:
 
 networks:
   job_tracker_network:
