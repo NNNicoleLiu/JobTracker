@@ -112,7 +112,7 @@ const Overview = ({ rows }) => {
     <>
       <div
         style={{
-          width: "85%",
+          width: "90%",
           margin: "0 auto",
           marginTop: "20px",
           padding: "24px",
@@ -158,11 +158,11 @@ const Overview = ({ rows }) => {
               New
             </Button>
           </Tooltip>
-          <Tooltip title="Filter" placement="top">
+          {/* <Tooltip title="Filter" placement="top">
             <IconButton>
               <FilterListIcon />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
           <Box
             component="div"
             sx={{
@@ -191,7 +191,7 @@ const Overview = ({ rows }) => {
 
       <table
         style={{
-          width: "85%",
+          width: "90%",
           margin: "0 auto",
           marginBottom: "20px",
           borderCollapse: "collapse",
@@ -221,19 +221,19 @@ const Overview = ({ rows }) => {
                 <WorkIcon /> &nbsp;Position
               </Box>
             </th>
-            <th style={{ width: "10%", borderRight: BORDER }}>
+            <th style={{ width: "128px", borderRight: BORDER }}>
               <Box sx={boxStyle}>
                 <FlagIcon /> &nbsp;Status
               </Box>
             </th>
             <th
               style={{
-                width: "15%",
+                width: "188px",
                 borderRight: BORDER,
               }}
             >
               <Box sx={boxStyle}>
-                <TodayIcon />
+                <TodayIcon sx={{ ml: 1 }} />
                 &nbsp;Date Applied
                 <IconButton onClick={clickDate}>
                   <SwapVertIcon />

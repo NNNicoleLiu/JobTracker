@@ -12,7 +12,7 @@ const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
     maxWidth: "210px",
     backgroundColor: bgColor,
     borderRadius: "20px",
-    margin: "8px",
+    margin: "12px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
