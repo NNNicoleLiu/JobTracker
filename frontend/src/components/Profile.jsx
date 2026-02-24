@@ -15,7 +15,7 @@ const Profile = (props) => {
     try {
       const response = await api.get("/auth/profile/");
       setProfile(response.data);
-      console.log(response);
+      // console.log(response);
     } catch (error) {
       console.error("Error fetching user profile:", error);
     }

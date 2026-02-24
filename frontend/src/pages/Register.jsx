@@ -52,7 +52,6 @@ const Register = () => {
 
   const register = async () => {
     if (password !== password2) {
-      // error.current = "Passwords do not match! Please check again!";
       setMatchError(true);
     } else {
       try {
@@ -67,7 +66,6 @@ const Register = () => {
         // Store JWT tokens (CHANGED from 'token')
         localStorage.setItem("access_token", access);
         localStorage.setItem("refresh_token", refresh);
-        localStorage.setItem("user", JSON.stringify(user));
 
         if (isChecked) {
           localStorage.setItem("check", isChecked);
@@ -80,23 +78,18 @@ const Register = () => {
         }
         navigate("/dashboard");
       } catch (err) {
-        // error.current = err.response.data.error;
-        console.log(err.response.data);
-        // alert(JSON.stringify(err.response.data));
+        // console.log(err.response.data);
         if (err.response.data.name) {
           setNameError(true);
           setNameMsg(err.response.data.name);
-          console.log(nameMsg);
         }
         if (err.response.data.email) {
           setEmailError(true);
           setEmailMsg(err.response.data.email);
-          console.log(emailMsg);
         }
         if (err.response.data.password) {
           setPasswordError(true);
           setPasswordMsg(err.response.data.password);
-          console.log(passwordMsg);
         }
       }
     }

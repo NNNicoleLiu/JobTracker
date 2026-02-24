@@ -66,7 +66,6 @@ const Login = () => {
       // Store JWT tokens (CHANGED from 'token')
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
-      localStorage.setItem("user", JSON.stringify(user));
 
       if (isChecked) {
         localStorage.setItem("check", isChecked);
@@ -80,20 +79,13 @@ const Login = () => {
 
       navigate("/dashboard");
     } catch (err) {
-      // error.current = err.response.data.error;
-      console.log(err);
-      // // alert(error.current);
-      // alert(err.response.data.error);
-      // setLoginError(true);
       if (err.response.data.email) {
         setEmailError(true);
         setEmailMsg(err.response.data.email);
-        console.log(emailMsg);
       }
       if (err.response.data.error) {
         setPasswordError(true);
         setPasswordMsg([err.response.data.error]);
-        console.log(passwordMsg);
       }
     }
   };
