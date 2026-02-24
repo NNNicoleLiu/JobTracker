@@ -3,6 +3,8 @@ import { Box, Typography } from "@mui/material";
 import job from "../assets/Jobhunt.png";
 import offer from "../assets/contract.png";
 import interview from "../assets/interview.png";
+import resume from "../assets/Resume.png";
+import apply from "../assets/apply.png";
 
 const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
   const sty = {
@@ -52,12 +54,27 @@ const Summary = ({ rows }) => {
     <>
       <Box
         sx={{
+          width: "100%",
+          maxWidth: "1500px",
           display: "flex",
           flexWrap: "row",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-around",
+          padding: "0 40px",
+          margin: "0 auto",
         }}
       >
+        <img
+          src={resume}
+          alt="Resume"
+          style={{
+            height: "18%",
+            maxHeight: "240px",
+            width: "18%",
+            maxWidth: "240px",
+            // margin: "0 20px",
+          }}
+        />
         <img
           src={job}
           alt="Job Application"
@@ -66,7 +83,18 @@ const Summary = ({ rows }) => {
             maxHeight: "300px",
             width: "20%",
             maxWidth: "300px",
-            margin: "0 40px",
+            // margin: "0 20px",
+          }}
+        />
+        <img
+          src={apply}
+          alt="Apply"
+          style={{
+            height: "18%",
+            maxHeight: "240px",
+            width: "18%",
+            maxWidth: "240px",
+            // margin: "0 20px",
           }}
         />
         <img
@@ -77,7 +105,7 @@ const Summary = ({ rows }) => {
             maxHeight: "240px",
             width: "18%",
             maxWidth: "240px",
-            margin: "0 40px",
+            // margin: "0 20px",
 
             // height: "240px", width: "240px", margin: "0 40px"
           }}
@@ -109,19 +137,21 @@ const Summary = ({ rows }) => {
             maxHeight: "220px",
             width: "17%",
             maxWidth: "220px",
-            margin: "0 40px",
+            // margin: "0 20px",
             // height: "220px", width: "220px", margin: "0 40px"
           }}
         />
       </Box>
       <Box
         sx={{
+          width: "100%",
+          maxWidth: "1500px",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
           overflowY: "scroll",
           alignItems: "center",
-          mx: 2,
+          m: "0 auto",
         }}
       >
         {/* need to update the counts */}
