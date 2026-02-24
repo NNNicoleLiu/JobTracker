@@ -225,8 +225,8 @@ ACCOUNT_LOGOUT_REDIRECT_URL = 'http://localhost:8000/accounts/'
 
 # JWT Settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),  # Access token expires in 1 hour
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),     # Refresh token expires in 7 days
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),  # Access token expires in 3 hour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),     # Refresh token expires in 14 days
     'ROTATE_REFRESH_TOKENS': True,                   # Generate new refresh token on refresh
     'BLACKLIST_AFTER_ROTATION': True,                # Blacklist old refresh token
     'UPDATE_LAST_LOGIN': True,
