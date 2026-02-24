@@ -1,6 +1,12 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+
+import config from "../config";
+import LoginGoogle from "../components/LoginGoogle";
+import Password from "../components/Password";
+import AlertMsg from "../components/Alertmsg";
+
 import {
   Container,
   Divider,
@@ -10,10 +16,6 @@ import {
   TextField,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
-
-import LoginGoogle from "../components/LoginGoogle";
-import Password from "../components/Password";
-import AlertMsg from "../components/Alertmsg";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,16 +34,30 @@ const Login = () => {
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  // if (localStorage.getItem("token")) {
-  //   return <Navigate to="/dashboard" />;
-  // }
-
   // login by email
   const [emailLogin, setEmailLogin] = React.useState(false);
 
+  const [isChecked, setIsChecked] = React.useState(false);
+
+  React.useEffect(() => {
+    if (localStorage.getItem("email")) {
+      setEmail(localStorage.getItem("email"));
+    }
+    if (localStorage.getItem("password")) {
+      setPassword(localStorage.getItem("password"));
+    }
+    if (localStorage.getItem("check")) {
+      setIsChecked(localStorage.getItem("check"));
+    }
+  }, []);
+
+  const handleChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
+
   const LoginEmail = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/auth/login/", {
+      const response = await axios.post(`${config.API_URL}/auth/login/`, {
         email,
         password,
       });
@@ -51,6 +67,16 @@ const Login = () => {
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
       localStorage.setItem("user", JSON.stringify(user));
+
+      if (isChecked) {
+        localStorage.setItem("check", isChecked);
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
+      } else {
+        localStorage.removeItem("check");
+        localStorage.removeItem("email");
+        localStorage.removeItem("password");
+      }
 
       navigate("/dashboard");
     } catch (err) {
@@ -148,7 +174,7 @@ const Login = () => {
             )}
 
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox checked={isChecked} onChange={handleChange} />}
               label="Remember me"
             />
             <Button

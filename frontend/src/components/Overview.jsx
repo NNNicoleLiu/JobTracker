@@ -109,10 +109,10 @@ const Overview = ({ rows }) => {
   };
 
   return (
-    <>
+    <div style={{ overflowX: "scroll", margin: "0 32px" }}>
       <div
         style={{
-          width: "90%",
+          width: "1300px",
           margin: "0 auto",
           marginTop: "20px",
           padding: "24px",
@@ -158,11 +158,11 @@ const Overview = ({ rows }) => {
               New
             </Button>
           </Tooltip>
-          {/* <Tooltip title="Filter" placement="top">
+          <Tooltip title="Filter" placement="top">
             <IconButton>
               <FilterListIcon />
             </IconButton>
-          </Tooltip> */}
+          </Tooltip>
           <Box
             component="div"
             sx={{
@@ -170,7 +170,7 @@ const Overview = ({ rows }) => {
               ml: 2,
               display: "flex",
               alignItems: "center",
-              width: 420,
+              width: 480,
               height: "40px",
               borderRadius: "20px",
               bgcolor: "white",
@@ -191,7 +191,7 @@ const Overview = ({ rows }) => {
 
       <table
         style={{
-          width: "90%",
+          width: "1300px",
           margin: "0 auto",
           marginBottom: "20px",
           borderCollapse: "collapse",
@@ -357,7 +357,7 @@ const Overview = ({ rows }) => {
       </Box> */}
       <JobEdit open={openJob} setOpen={setOpenJob} editData={editData} />
       <DeleteModal open={openDelete} setOpen={setOpenDelete} id={deleteId} />
-    </>
+    </div>
   );
 };
 

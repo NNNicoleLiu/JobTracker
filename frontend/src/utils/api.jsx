@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:8000";
 
@@ -31,6 +32,7 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
+    const navigate = useNavigate();
 
     // If 401 error and we haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -59,7 +61,7 @@ api.interceptors.response.use(
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         localStorage.removeItem("user");
-        window.location.href = "/login";
+        navigate("/login");
         return Promise.reject(refreshError);
       }
     }

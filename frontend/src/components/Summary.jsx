@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import job from "../assets/Jobhunt.png";
 import offer from "../assets/contract.png";
-import title from "../assets/Title.png";
+import interview from "../assets/interview.png";
 
 const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
   const sty = {
@@ -53,7 +53,7 @@ const Summary = ({ rows }) => {
       <Box
         sx={{
           display: "flex",
-          flexWrap: "wrap",
+          flexWrap: "row",
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -61,9 +61,28 @@ const Summary = ({ rows }) => {
         <img
           src={job}
           alt="Job Application"
-          style={{ height: "300px", width: "300px", margin: "0 40px" }}
+          style={{
+            height: "20%",
+            maxHeight: "300px",
+            width: "20%",
+            maxWidth: "300px",
+            margin: "0 40px",
+          }}
         />
-        <Box sx={{ mx: "40px" }}>
+        <img
+          src={interview}
+          alt="Job interview"
+          style={{
+            height: "18%",
+            maxHeight: "240px",
+            width: "18%",
+            maxWidth: "240px",
+            margin: "0 40px",
+
+            // height: "240px", width: "240px", margin: "0 40px"
+          }}
+        />
+        {/* <Box sx={{ mx: "40px" }}>
           <Typography
             variant="h3"
             component="div"
@@ -81,18 +100,20 @@ const Summary = ({ rows }) => {
           >
             Track and Manage your Job Applications !!
           </Typography>
-        </Box>
+        </Box> */}
         <img
           src={offer}
           alt="Job Offer"
-          style={{ height: "220px", width: "220px", margin: "0 40px" }}
+          style={{
+            height: "17%",
+            maxHeight: "220px",
+            width: "17%",
+            maxWidth: "220px",
+            margin: "0 40px",
+            // height: "220px", width: "220px", margin: "0 40px"
+          }}
         />
       </Box>
-      {/* <img
-        src={title}
-        alt="Job Application Tracker"
-        style={{ margin: "8px 10%" }}
-      /> */}
       <Box
         sx={{
           display: "flex",
