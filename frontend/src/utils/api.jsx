@@ -1,11 +1,9 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
-const API_URL = "http://localhost:8000";
+import config from "../config";
 
 // Create axios instance
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: config.API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,8 +30,6 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    const navigate = useNavigate();
-
     // If 401 error and we haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -43,25 +39,35 @@ api.interceptors.response.use(
 
         if (refreshToken) {
           // Try to refresh the token
-          const response = await axios.post(`${API_URL}/auth/token/refresh/`, {
-            refresh: refreshToken,
-          });
+          const response = await axios.post(
+            `${config.API_URL}/auth/token/refresh/`,
+            {
+              refresh: refreshToken,
+            }
+          );
 
           const { access } = response.data;
 
           // Save new access token
           localStorage.setItem("access_token", access);
 
+          // 👇 Update the instance default header
+          api.defaults.headers.common["Authorization"] = `Bearer ${access}`;
+
           // Retry original request with new token
-          originalRequest.headers.Authorization = `Bearer ${access}`;
+          originalRequest.headers["Authorization"] = `Bearer ${access}`;
           return api(originalRequest);
+        } else {
+          // No refresh token, redirect to login
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          window.location.href = "/login"; // 👈 use this instead of navigate()
         }
       } catch (refreshError) {
         // Refresh failed - logout user
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
-        localStorage.removeItem("user");
-        navigate("/login");
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
