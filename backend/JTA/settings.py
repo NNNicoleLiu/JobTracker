@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+from decouple import config
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,17 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#_4$k-=^!qhz81y+zsyojr63@(lv_i5m9^i_cb!q7a-$g#w6*a'
+# SECRET_KEY = 'django-insecure-#_4$k-=^!qhz81y+zsyojr63@(lv_i5m9^i_cb!q7a-$g#w6*a'
+SECRET_KEY = config('SECRET_KEY', default='your-secret-key-change-in-production')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0',
-    'backend',  # Docker service name
-]
+# ALLOWED_HOSTS = [
+#     'localhost',
+#     '127.0.0.1',
+#     '0.0.0.0',
+#     'backend',  # Docker service name
+# ]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -44,7 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
+    'rest_framework_simplejwt',  # Changed from authtoken
+    'rest_framework_simplejwt.token_blacklist',  # For logout
 
     # Django Allauth
     'django.contrib.sites',  # Required by allauth
@@ -108,8 +115,12 @@ CORS_ALLOW_CREDENTIALS = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', default='job_tracker_db'),
+        'USER': config('DB_USER', default='job_tracker_user'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
@@ -128,12 +139,15 @@ AUTHENTICATION_BACKENDS = [
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
+}
+
+REST_AUTH = {
+    'TOKEN_MODEL': None,
 }
 
 # Password validation
@@ -162,8 +176,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Etc/UTC'
 
 USE_I18N = True
 
@@ -208,3 +221,27 @@ SOCIALACCOUNT_PROVIDERS = {
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL = 'http://localhost:8000/auth/google/callback/' # Your frontend URL
 ACCOUNT_LOGOUT_REDIRECT_URL = 'http://localhost:8000/accounts/'
+
+
+# JWT Settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),  # Access token expires in 3 hour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),     # Refresh token expires in 14 days
+    'ROTATE_REFRESH_TOKENS': True,                   # Generate new refresh token on refresh
+    'BLACKLIST_AFTER_ROTATION': True,                # Blacklist old refresh token
+    'UPDATE_LAST_LOGIN': True,
+    
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}

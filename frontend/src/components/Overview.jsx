@@ -57,35 +57,40 @@ const Overview = ({ rows }) => {
 
   const [searchTerm, setSearchTerm] = React.useState("");
 
-  // React.useEffect(() => {
-  //   setFilterRows(rows);
-  // }, [rows]);
-  React.useEffect(() => {
-    const filtered = filteredApp(rows, searchTerm);
-    setFilterRows(filtered);
-  }, [searchTerm, rows]);
+  // sort by applied date
+  const [date, setDate] = React.useState(false);
 
-  const filteredApp = (rows, searchTerm) => {
-    // Return all if search term is empty
+  React.useEffect(() => {
+    const filtered = filteredApp(rows, searchTerm, date);
+    setFilterRows(filtered);
+  }, [date, searchTerm, rows]);
+
+  const filteredApp = (rows, searchTerm, date) => {
+    // use [...arr] will sort a copy instead of mutates the original
+    const sorted = (arr) =>
+      [...arr].sort((a, b) =>
+        date
+          ? new Date(a.applied_at) - new Date(b.applied_at)
+          : new Date(b.applied_at) - new Date(a.applied_at)
+      );
+
     if (!searchTerm || searchTerm.trim() === "") {
-      return rows;
+      return sorted(rows);
     }
 
-    // Convert search term to lowercase for case-insensitive search
     const search = searchTerm.toLowerCase().trim();
 
-    // Filter applications
-    return rows.filter((app) => {
-      const company = app.company?.toLowerCase() || "";
-      const position = app.position?.toLowerCase() || "";
-
-      // Return true if search term found in company OR position
-      return company.includes(search) || position.includes(search);
-    });
+    return sorted(
+      rows.filter((app) => {
+        const company = app.company?.toLowerCase() || "";
+        const position = app.position?.toLowerCase() || "";
+        return company.includes(search) || position.includes(search);
+      })
+    );
   };
 
   const clickSearch = () => {
-    const filtered = filteredApp(rows, searchTerm);
+    const filtered = filteredApp(rows, searchTerm, date);
     setFilterRows(filtered);
   };
 
@@ -94,16 +99,20 @@ const Overview = ({ rows }) => {
     setOpenJob(true);
   };
 
-  const handleClick = (data) => {
+  const clickRow = (data) => {
     setEditData(data);
     setOpenJob(true);
   };
 
+  const clickDate = () => {
+    setDate(!date);
+  };
+
   return (
-    <>
+    <div style={{ overflowX: "scroll", margin: "0 32px" }}>
       <div
         style={{
-          width: "85%",
+          width: "1300px",
           margin: "0 auto",
           marginTop: "20px",
           padding: "24px",
@@ -142,31 +151,26 @@ const Overview = ({ rows }) => {
                 fontFamily: "Inder, sans-serif",
                 fontSize: "15px",
                 px: "10px",
-                mx: 3,
+                mx: 2,
               }}
               onClick={clickAdd}
             >
               New
             </Button>
           </Tooltip>
-          {/* <Tooltip title="Filter" placement="top">
+          <Tooltip title="Filter" placement="top">
             <IconButton>
               <FilterListIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Sort" placement="top">
-            <IconButton>
-              <SwapVertIcon />
-            </IconButton>
-          </Tooltip> */}
           <Box
             component="div"
             sx={{
               px: "12px",
-              ml: 1,
+              ml: 2,
               display: "flex",
               alignItems: "center",
-              width: 420,
+              width: 480,
               height: "40px",
               borderRadius: "20px",
               bgcolor: "white",
@@ -187,7 +191,7 @@ const Overview = ({ rows }) => {
 
       <table
         style={{
-          width: "85%",
+          width: "1300px",
           margin: "0 auto",
           marginBottom: "20px",
           borderCollapse: "collapse",
@@ -217,20 +221,23 @@ const Overview = ({ rows }) => {
                 <WorkIcon /> &nbsp;Position
               </Box>
             </th>
-            <th style={{ width: "10.5%", borderRight: BORDER }}>
+            <th style={{ width: "128px", borderRight: BORDER }}>
               <Box sx={boxStyle}>
                 <FlagIcon /> &nbsp;Status
               </Box>
             </th>
             <th
               style={{
-                width: "12.5%",
+                width: "188px",
                 borderRight: BORDER,
               }}
             >
               <Box sx={boxStyle}>
-                <TodayIcon />
+                <TodayIcon sx={{ ml: 1 }} />
                 &nbsp;Date Applied
+                <IconButton onClick={clickDate}>
+                  <SwapVertIcon />
+                </IconButton>
               </Box>
             </th>
             <th style={{ width: "20%", borderRight: BORDER }}>
@@ -263,7 +270,7 @@ const Overview = ({ rows }) => {
                 }}
                 onMouseEnter={() => setHoveredRow(row[1].id)}
                 onMouseLeave={() => setHoveredRow(null)}
-                onClick={() => handleClick(row[1])}
+                onClick={() => clickRow(row[1])}
               >
                 <td>
                   {hoveredRow === row[1].id && (
@@ -350,7 +357,7 @@ const Overview = ({ rows }) => {
       </Box> */}
       <JobEdit open={openJob} setOpen={setOpenJob} editData={editData} />
       <DeleteModal open={openDelete} setOpen={setOpenDelete} id={deleteId} />
-    </>
+    </div>
   );
 };
 

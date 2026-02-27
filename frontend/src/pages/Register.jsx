@@ -1,6 +1,12 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+
+import config from "../config";
+import LoginGoogle from "../components/LoginGoogle";
+import Password from "../components/Password";
+import AlertMsg from "../components/Alertmsg";
+
 import {
   TextField,
   Container,
@@ -10,11 +16,6 @@ import {
   Divider,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
-
-import LoginGoogle from "../components/LoginGoogle";
-import Password from "../components/Password";
-
-import AlertMsg from "../components/Alertmsg";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -39,44 +40,56 @@ const Register = () => {
   const [showPassword2, setShowPassword2] = React.useState(false);
   const [emailRegister, setEmailRegister] = React.useState(false);
 
+  // remember me
+  const [isChecked, setIsChecked] = React.useState(false);
+
+  const handleChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
 
   const register = async () => {
     if (password !== password2) {
-      // error.current = "Passwords do not match! Please check again!";
       setMatchError(true);
     } else {
       try {
-        const response = await axios.post(
-          "http://localhost:8000/auth/register/",
-          {
-            name,
-            email,
-            password,
-            password2,
-          }
-        );
-        localStorage.setItem("token", response.data.token);
+        const response = await axios.post(`${config.API_URL}auth/register/`, {
+          name,
+          email,
+          password,
+          password2,
+        });
+        const { access, refresh, user } = response.data;
+
+        // Store JWT tokens (CHANGED from 'token')
+        localStorage.setItem("access_token", access);
+        localStorage.setItem("refresh_token", refresh);
+
+        if (isChecked) {
+          localStorage.setItem("check", isChecked);
+          localStorage.setItem("email", email);
+          localStorage.setItem("password", password);
+        } else {
+          localStorage.removeItem("check");
+          localStorage.removeItem("email");
+          localStorage.removeItem("password");
+        }
         navigate("/dashboard");
       } catch (err) {
-        // error.current = err.response.data.error;
-        console.log(err.response.data);
-        // alert(JSON.stringify(err.response.data));
+        // console.log(err.response.data);
         if (err.response.data.name) {
           setNameError(true);
           setNameMsg(err.response.data.name);
-          console.log(nameMsg);
         }
         if (err.response.data.email) {
           setEmailError(true);
           setEmailMsg(err.response.data.email);
-          console.log(emailMsg);
         }
         if (err.response.data.password) {
           setPasswordError(true);
           setPasswordMsg(err.response.data.password);
-          console.log(passwordMsg);
         }
       }
     }
@@ -183,7 +196,7 @@ const Register = () => {
               />
             )}
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox checked={isChecked} onChange={handleChange} />}
               label="Remember me"
             />
             <Button

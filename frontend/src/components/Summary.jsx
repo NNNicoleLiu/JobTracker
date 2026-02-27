@@ -2,7 +2,9 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import job from "../assets/Jobhunt.png";
 import offer from "../assets/contract.png";
-import title from "../assets/Title.png";
+import interview from "../assets/interview.png";
+import resume from "../assets/Resume.png";
+import apply from "../assets/apply.png";
 
 const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
   const sty = {
@@ -12,7 +14,7 @@ const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
     maxWidth: "210px",
     backgroundColor: bgColor,
     borderRadius: "20px",
-    margin: "8px",
+    margin: "12px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -52,18 +54,63 @@ const Summary = ({ rows }) => {
     <>
       <Box
         sx={{
+          width: "100%",
+          maxWidth: "1500px",
           display: "flex",
-          flexWrap: "wrap",
+          flexWrap: "row",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-around",
+          padding: "0 40px",
+          margin: "0 auto",
         }}
       >
         <img
+          src={resume}
+          alt="Resume"
+          style={{
+            height: "18%",
+            maxHeight: "240px",
+            width: "18%",
+            maxWidth: "240px",
+            // margin: "0 20px",
+          }}
+        />
+        <img
           src={job}
           alt="Job Application"
-          style={{ height: "300px", width: "300px", margin: "0 40px" }}
+          style={{
+            height: "20%",
+            maxHeight: "300px",
+            width: "20%",
+            maxWidth: "300px",
+            // margin: "0 20px",
+          }}
         />
-        <Box sx={{ mx: "40px" }}>
+        <img
+          src={apply}
+          alt="Apply"
+          style={{
+            height: "18%",
+            maxHeight: "240px",
+            width: "18%",
+            maxWidth: "240px",
+            // margin: "0 20px",
+          }}
+        />
+        <img
+          src={interview}
+          alt="Job interview"
+          style={{
+            height: "18%",
+            maxHeight: "240px",
+            width: "18%",
+            maxWidth: "240px",
+            // margin: "0 20px",
+
+            // height: "240px", width: "240px", margin: "0 40px"
+          }}
+        />
+        {/* <Box sx={{ mx: "40px" }}>
           <Typography
             variant="h3"
             component="div"
@@ -81,26 +128,30 @@ const Summary = ({ rows }) => {
           >
             Track and Manage your Job Applications !!
           </Typography>
-        </Box>
+        </Box> */}
         <img
           src={offer}
           alt="Job Offer"
-          style={{ height: "220px", width: "220px", margin: "0 40px" }}
+          style={{
+            height: "17%",
+            maxHeight: "220px",
+            width: "17%",
+            maxWidth: "220px",
+            // margin: "0 20px",
+            // height: "220px", width: "220px", margin: "0 40px"
+          }}
         />
       </Box>
-      {/* <img
-        src={title}
-        alt="Job Application Tracker"
-        style={{ margin: "8px 10%" }}
-      /> */}
       <Box
         sx={{
+          width: "100%",
+          maxWidth: "1500px",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
           overflowY: "scroll",
           alignItems: "center",
-          mx: 2,
+          m: "0 auto",
         }}
       >
         {/* need to update the counts */}

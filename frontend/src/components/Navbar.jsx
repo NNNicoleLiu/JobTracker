@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
+import Profile from "./Profile";
 
 import {
   AppBar,
@@ -11,7 +12,6 @@ import {
   Button,
   Menu,
   MenuItem,
-  Divider,
 } from "@mui/material";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -19,11 +19,10 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 
-const settings = ["Profile", "Settings", "Logout"];
-
 const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
+  const [openProfile, setOpenProfile] = React.useState(false);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -33,113 +32,121 @@ const Navbar = () => {
     setAnchorElUser(null);
   };
 
-  const clickProfile = () => {};
+  const clickProfile = () => {
+    setOpenProfile(true);
+  };
 
-  const clickSettings = () => {};
+  // const clickSettings = () => {};
 
   const clickLogout = async () => {
-    const token = "token " + localStorage.getItem("token");
-
     try {
-      await axios({
-        url: "http://localhost:8000/auth/logout/",
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-      });
-      localStorage.removeItem("token");
+      const refreshToken = localStorage.getItem("refresh_token");
+
+      if (refreshToken) {
+        // Blacklist refresh token
+        await api.post("/auth/logout/", {
+          refresh: refreshToken,
+        });
+      }
+
+      // Clear storage
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
       navigate("/login");
     } catch (err) {
-      console.log(err);
-      alert(err.response.data);
+      console.error("Logout error:", err);
+      // Clear storage anyway
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      navigate("/login");
     }
   };
 
   return (
-    <AppBar position="static" color="transparent">
-      <Toolbar
-        sx={{
-          boxSizing: "border-box",
-          backgroundColor: "#d9d9d9",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingLeft: "30px",
-          paddingRight: "30px",
-        }}
-      >
-        <Box
+    <>
+      <AppBar position="static" color="transparent">
+        <Toolbar
           sx={{
+            boxSizing: "border-box",
+            backgroundColor: "#d9d9d9",
             display: "flex",
             flexDirection: "row",
+            justifyContent: "space-between",
             alignItems: "center",
-            pl: 1,
+            paddingLeft: "30px",
+            paddingRight: "30px",
           }}
         >
-          <Avatar
-            sx={{
-              width: 60,
-              height: 60,
-              backgroundColor: "#1ccc28",
-              my: "10px",
-            }}
-          >
-            JAT
-          </Avatar>
-          <Typography
-            variant="h3"
-            component="div"
-            sx={{
-              color: "black",
-              fontFamily: "Inder, sans-serif",
-              pl: "20px",
-              fontSize: "36px",
-            }}
-          >
-            Dashboard
-          </Typography>
-        </Box>
-        <Box>
-          <Button
+          <Box
             sx={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
-              color: "black",
-              mr: 1,
+              pl: 1,
             }}
-            onClick={handleOpenUserMenu}
           >
-            <AccountCircleIcon sx={{ fontSize: 45 }} />
-            <KeyboardArrowDownIcon sx={{ fontSize: 30 }} />
-          </Button>
-          <Menu
-            sx={{ mt: "45px" }}
-            id="menu-appbar"
-            anchorEl={anchorElUser}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={Boolean(anchorElUser)}
-            onClose={handleCloseUserMenu}
-          >
-            <MenuItem
+            <Avatar
               sx={{
-                fontFamily: "Inder, sans-serif",
-                fontSize: "20px",
+                width: 60,
+                height: 60,
+                backgroundColor: "#1ccc28",
+                my: "10px",
               }}
-              onClick={clickProfile}
             >
-              <AccountCircleIcon sx={{ mr: 2 }} /> Profile
-            </MenuItem>
-            <MenuItem
+              JAT
+            </Avatar>
+            <Typography
+              variant="h3"
+              component="div"
+              sx={{
+                color: "black",
+                fontFamily: "Inder, sans-serif",
+                pl: "20px",
+                fontSize: "3vw",
+              }}
+            >
+              Job Applications Tracker
+            </Typography>
+          </Box>
+          <Box>
+            <Button
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                color: "black",
+                mr: 1,
+              }}
+              onClick={handleOpenUserMenu}
+            >
+              <AccountCircleIcon sx={{ fontSize: 45 }} />
+              <KeyboardArrowDownIcon sx={{ fontSize: 30 }} />
+            </Button>
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem
+                sx={{
+                  fontFamily: "Inder, sans-serif",
+                  fontSize: "20px",
+                }}
+                onClick={clickProfile}
+              >
+                <AccountCircleIcon sx={{ mr: 2 }} /> Profile
+              </MenuItem>
+              {/* <MenuItem
               sx={{
                 fontFamily: "Inder, sans-serif",
                 fontSize: "20px",
@@ -148,21 +155,23 @@ const Navbar = () => {
             >
               <Settings sx={{ mr: 2 }} />
               Settings
-            </MenuItem>
-            <MenuItem
-              sx={{
-                fontFamily: "Inder, sans-serif",
-                fontSize: "20px",
-              }}
-              onClick={clickLogout}
-            >
-              <Logout sx={{ mr: 2 }} />
-              Logout
-            </MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
-    </AppBar>
+            </MenuItem> */}
+              <MenuItem
+                sx={{
+                  fontFamily: "Inder, sans-serif",
+                  fontSize: "20px",
+                }}
+                onClick={clickLogout}
+              >
+                <Logout sx={{ mr: 2 }} />
+                Logout
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Profile open={openProfile} setOpen={setOpenProfile} />
+    </>
   );
 };
 

@@ -2,12 +2,15 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, get_user_model
+from rest_framework_simplejwt.tokens import RefreshToken
+# from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+# from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+# Google OAuth
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
-from rest_framework.authtoken.models import Token
+
 from rest_framework import status
 
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
@@ -16,10 +19,14 @@ User = get_user_model()
 
 class GoogleLogin(SocialLoginView):
     """
-    API endpoint for Google login
+    Google OAuth Login with JWT
     POST /auth/google/
     Body: { "access_token": "google_access_token" }
-    Response: { "token": "your_token", "user": {...} }
+    Response: {
+        "access": "jwt_access_token",
+        "refresh": "jwt_refresh_token",
+        "user": {...}
+    }
     """
     adapter_class = GoogleOAuth2Adapter
     callback_url = "http://localhost:5173"
@@ -28,17 +35,17 @@ class GoogleLogin(SocialLoginView):
     def post(self, request, *args, **kwargs):
         # Call parent method to handle Google OAuth
         response = super().post(request, *args, **kwargs)
+        print('response google', response)
         
         # Customize response
-        if response.status_code == 200:
+        if response.status_code in [200, 204]:
             user = self.user
             
-            # Get or create token
-            token, created = Token.objects.get_or_create(user=user)
+            refresh = RefreshToken.for_user(user)
             
-            # Return custom response with token
             return Response({
-                'token': token.key,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
                 'user': UserSerializer(user).data,
                 'message': 'Google login successful'
             }, status=status.HTTP_200_OK)
@@ -48,13 +55,12 @@ class GoogleLogin(SocialLoginView):
 
 class RegisterView(generics.CreateAPIView):
     """
-    User Registration
+    User Registration with JWT
     POST /auth/register/
-    Body: {
-        "name": "John Doe",
-        "email": "john@example.com",
-        "password": "SecurePass123!",
-        "password2": "SecurePass123!"
+    Response: {
+        "user": {...},
+        "access": "jwt_access_token",
+        "refresh": "jwt_refresh_token"
     }
     """
     queryset = User.objects.all()
@@ -65,22 +71,26 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        token, created = Token.objects.get_or_create(user=user)
+        
+         # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
         
         return Response({
             'user': UserSerializer(user).data,
-            'token': token.key,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
             'message': 'User registered successfully'
         }, status=status.HTTP_201_CREATED)
 
-
 class LoginView(APIView):
     """
-    User Login with Email and Password
+    User Login with JWT
     POST /auth/login/
-    Body: {
-        "email": "john@example.com",
-        "password": "SecurePass123!"
+    Body: { "email": "...", "password": "..." }
+    Response: {
+        "user": {...},
+        "access": "jwt_access_token",
+        "refresh": "jwt_refresh_token"
     }
     """
     permission_classes = (AllowAny,)
@@ -96,10 +106,13 @@ class LoginView(APIView):
         user = authenticate(request, username=email, password=password)
         
         if user:
-            token, created = Token.objects.get_or_create(user=user)
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            
             return Response({
                 'user': UserSerializer(user).data,
-                'token': token.key,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
                 'message': 'Login successful'
             }, status=status.HTTP_200_OK)
         else:
@@ -110,14 +123,19 @@ class LoginView(APIView):
 
 class LogoutView(APIView):
     """
-    User Logout
+    User Logout - Blacklist refresh token
     POST /auth/logout/
+    Body: { "refresh": "refresh_token" }
     """
     permission_classes = (IsAuthenticated,)
     
     def post(self, request):
         try:
-            request.user.auth_token.delete()
+            refresh_token = request.data.get('refresh')
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()  # Blacklist the refresh token
+            
             return Response({
                 'message': 'Logout successful'
             }, status=status.HTTP_200_OK)
@@ -131,6 +149,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     """
     Get/Update User Profile
     GET/PATCH /auth/profile/
+    Headers: Authorization: Bearer <access_token>
     """
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
