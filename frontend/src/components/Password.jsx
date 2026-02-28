@@ -25,6 +25,7 @@ const Password = (props) => {
     <FormControl variant="outlined" required fullWidth margin="normal">
       <InputLabel htmlFor={props.label}>{props.label}</InputLabel>
       <OutlinedInput
+        name={props.label}
         id={props.label}
         type={props.showPassword ? "text" : "password"}
         endAdornment={

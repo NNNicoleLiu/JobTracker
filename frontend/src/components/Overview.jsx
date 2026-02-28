@@ -260,6 +260,7 @@ const Overview = ({ rows }) => {
             return (
               <tr
                 key={row[1].id}
+                data-testid={`job-${row[1].id}`}
                 style={{
                   borderBottom: BORDER,
                   alignItems: "center",

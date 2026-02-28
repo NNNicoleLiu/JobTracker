@@ -110,6 +110,7 @@ const Navbar = () => {
           </Box>
           <Box>
             <Button
+              name="openmenu"
               sx={{
                 display: "flex",
                 flexDirection: "row",
@@ -138,6 +139,7 @@ const Navbar = () => {
               onClose={handleCloseUserMenu}
             >
               <MenuItem
+                name="profile"
                 sx={{
                   fontFamily: "Inder, sans-serif",
                   fontSize: "20px",
@@ -157,6 +159,7 @@ const Navbar = () => {
               Settings
             </MenuItem> */}
               <MenuItem
+                name="logout"
                 sx={{
                   fontFamily: "Inder, sans-serif",
                   fontSize: "20px",

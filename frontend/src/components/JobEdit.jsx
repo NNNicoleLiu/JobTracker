@@ -165,6 +165,7 @@ const JobEdit = (props) => {
         >
           {/* Company Name */}
           <TextField
+            name="company"
             label="Company Name"
             value={formData.company}
             onChange={handleChange("company")}
@@ -181,6 +182,7 @@ const JobEdit = (props) => {
           )}
           {/* Position */}
           <TextField
+            name="position"
             label="Position"
             value={formData.position}
             onChange={handleChange("position")}
@@ -199,6 +201,7 @@ const JobEdit = (props) => {
           <FormControl fullWidth>
             <InputLabel>Status</InputLabel>
             <Select
+              name="status"
               value={formData.status}
               label="Status"
               onChange={handleChange("status")}
@@ -213,6 +216,7 @@ const JobEdit = (props) => {
 
           {/* Applied Date */}
           <TextField
+            name="applied_date"
             label="Applied Date"
             type="date"
             value={formData.applied_at.split("T")[0]}
@@ -222,6 +226,7 @@ const JobEdit = (props) => {
 
           {/* Link */}
           <TextField
+            name="link"
             label="Job Link"
             value={formData.link}
             onChange={handleChange("link")}
@@ -232,6 +237,7 @@ const JobEdit = (props) => {
 
           {/* Comment */}
           <TextField
+            name="comment"
             label="Comment"
             value={formData.comment}
             onChange={handleChange("comment")}
