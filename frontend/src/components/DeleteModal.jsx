@@ -26,7 +26,7 @@ const DeleteModal = (props) => {
   const clickYes = async () => {
     try {
       const response = await api.delete(`/jobs/${props.id}/`);
-      alert("Information delete successfully!");
+      // alert("Information delete successfully!");
       console.log("Response Data:", response.data);
       props.setOpen(false);
       navigate(0);
@@ -37,8 +37,8 @@ const DeleteModal = (props) => {
   };
   const clickNo = () => props.setOpen(false);
   return (
-    <Modal open={props.open} aria-labelledby="delete-application-modal">
-      <Box sx={style}>
+    <Modal open={props.open} aria-label="delete-modal">
+      <Box sx={style} aria-label="delete-modal">
         <Typography id="modal-modal-title" variant="h6" component="h2">
           Do you want to delete all the information about this job application?
         </Typography>

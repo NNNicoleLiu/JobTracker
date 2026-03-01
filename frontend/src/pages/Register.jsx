@@ -137,7 +137,6 @@ const Register = () => {
         {emailRegister && (
           <div>
             <TextField
-              name="name"
               margin="normal"
               required
               fullWidth
@@ -151,7 +150,6 @@ const Register = () => {
               <AlertMsg msg={nameMsg} closeAlert={() => setNameError(false)} />
             )}
             <TextField
-              name="email"
               margin="normal"
               required
               fullWidth
