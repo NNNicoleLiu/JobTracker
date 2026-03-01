@@ -1,47 +1,51 @@
-name: Full-Stack CI Pipeline
+name: Full Stack Project CI Pipeline (E2E)
 
 on:
-  # push:
-  #   branches: [JWT]
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
 
 jobs:
-  # =========================
-  # BACKEND JOB
-  # =========================
-  backend:
+  e2e:
     runs-on: ubuntu-latest
 
     services:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U postgres"
+          --health-cmd="pg_isready -U test_user"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
 
     env:
+      # Backend
       DB_NAME: test_db
-      DB_USER: postgres
-      DB_PASSWORD: postgres
+      DB_USER: test_user
+      DB_PASSWORD: test_password
       DB_HOST: localhost
       DB_PORT: 5432
-      SECRET_KEY: ci-secret-key
-      DEBUG: True
-      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,backend
+      SECRET_KEY: test-secret-key
+      DEBUG: False
+      ALLOWED_HOSTS: localhost,127.0.0.1
+
+      # Frontend
+      VITE_API_URL: http://localhost:8000
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # -------------------------
+      # 🐍 Setup Backend
+      # -------------------------
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -57,24 +61,20 @@ jobs:
           cd backend
           python manage.py migrate
 
-      - name: Run backend tests
+      - name: Start backend
         run: |
           cd backend
-          python manage.py test
+          python manage.py runserver 0.0.0.0:8000 &
 
-  # =========================
-  # FRONTEND JOB
-  # =========================
-  frontend:
-    runs-on: ubuntu-latest
+      - name: Wait for backend
+        run: |
+          until curl -s http://localhost:8000; do
+            sleep 2
+          done
 
-    env:
-      VITE_API_URL: http://localhost:8000
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      # -------------------------
+      # ⚛️ Setup Frontend
+      # -------------------------
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -85,19 +85,34 @@ jobs:
           cd frontend
           npm install
 
-      - name: Start backend server
-        run: |
-          cd backend
-          python manage.py migrate
-          python manage.py runserver 0.0.0.0:8000 &
-
-      - name: Wait for backend
-        run: |
-          until curl -s http://localhost:8000; do
-            sleep 2
-          done
-
       - name: Build frontend
         run: |
           cd frontend
-          npm run dev
+          npm run build
+
+      - name: Start frontend
+        run: |
+          cd frontend
+          npm run preview -- --host 0.0.0.0 --port 5173 &
+
+      - name: Wait for frontend
+        run: |
+          until curl -s http://localhost:5173; do
+            sleep 2
+          done
+
+      # -------------------------
+      # 🎭 Install Playwright
+      # -------------------------
+      - name: Install Playwright
+        run: |
+          cd frontend
+          npx playwright install --with-deps
+
+      # -------------------------
+      # 🚀 Run E2E Tests
+      # -------------------------
+      - name: Run E2E tests
+        run: |
+          cd frontend
+          npx playwright test
