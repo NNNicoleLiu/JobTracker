@@ -55,7 +55,7 @@ const Register = () => {
       setMatchError(true);
     } else {
       try {
-        const response = await axios.post(`${config.API_URL}auth/register/`, {
+        const response = await axios.post(`${config.API_URL}/auth/register/`, {
           name,
           email,
           password,
@@ -78,7 +78,7 @@ const Register = () => {
         }
         navigate("/dashboard");
       } catch (err) {
-        // console.log(err.response.data);
+        // console.log(err);
         if (err.response.data.name) {
           setNameError(true);
           setNameMsg(err.response.data.name);

@@ -110,6 +110,7 @@ const Navbar = () => {
           </Box>
           <Box>
             <Button
+              aria-label="openmenu"
               sx={{
                 display: "flex",
                 flexDirection: "row",

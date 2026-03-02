@@ -260,6 +260,7 @@ const Overview = ({ rows }) => {
             return (
               <tr
                 key={row[1].id}
+                data-testid={`job-${row[1].id}`}
                 style={{
                   borderBottom: BORDER,
                   alignItems: "center",
@@ -276,6 +277,8 @@ const Overview = ({ rows }) => {
                   {hoveredRow === row[1].id && (
                     <Tooltip title="Delete" placement="left">
                       <IconButton
+                        aria-label="delete job"
+                        data-testid="delete-job-btn"
                         sx={{
                           height: "40px",
                           width: "40x",
