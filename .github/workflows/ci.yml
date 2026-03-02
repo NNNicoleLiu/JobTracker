@@ -80,6 +80,7 @@ jobs:
           python manage.py runserver 0.0.0.0:8000 &
 
       - name: Wait for backend
+        timeout-minutes: 1
         run: |
           until curl -s http://localhost:8000; do
             sleep 2
@@ -109,6 +110,7 @@ jobs:
           npm run preview -- --host 0.0.0.0 --port 5173 &
 
       - name: Wait for frontend
+        timeout-minutes: 1
         run: |
           until curl -s http://localhost:5173; do
             sleep 2
