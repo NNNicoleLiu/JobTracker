@@ -30,6 +30,8 @@ SECRET_KEY = config('SECRET_KEY', default='your-secret-key-change-in-production'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # ALLOWED_HOSTS = [
 #     'localhost',
