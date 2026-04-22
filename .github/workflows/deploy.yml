@@ -34,8 +34,7 @@ jobs:
             cd /home/${{ secrets.EC2_USER }}/app
 
             # 2. Build and restart your containers
-            sudo docker compose up -d --build
+            sudo docker-compose up -d --build
 
             # 3. Optional: Clean up unused Docker images to save disk space
-            docker system prune -a -f
-            docker volume prune -f
+            sudo docker image prune -f
