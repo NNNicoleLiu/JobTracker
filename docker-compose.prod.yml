@@ -24,7 +24,7 @@ services:
         VITE_API_URL: http://52.62.237.44:8000
     restart: always
     ports:
-      - "80:80"
+      - "5173:5173"
     depends_on:
       - backend
 
