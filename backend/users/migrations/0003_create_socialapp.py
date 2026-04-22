@@ -27,7 +27,7 @@ def create_google_socialapp(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("your_app", "0002_alter_user_id"),  # 👈 depend on latest migration
+        ("users", "0002_alter_user_id"),  # 👈 depend on latest migration
         ("sites", "0002_alter_domain_unique"),
         ("socialaccount", "0001_initial"),
     ]
