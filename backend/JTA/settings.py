@@ -108,6 +108,7 @@ WSGI_APPLICATION = 'JTA.wsgi.application'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'http://52.62.237.44:5173'
 ]
 # default port number if use vite to create React app
 
