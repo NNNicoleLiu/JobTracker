@@ -37,4 +37,5 @@ jobs:
             sudo docker-compose up -d --build
 
             # 3. Optional: Clean up unused Docker images to save disk space
-            sudo docker image prune -f
+            sudo docker system prune -a -f
+            sudo docker volume prune -f
