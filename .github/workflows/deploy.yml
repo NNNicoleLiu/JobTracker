@@ -19,8 +19,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           source: "." # The path to files you want to copy (e.g., "dist/*" or ".")
-          target: "/home/ubuntu/app" # Destination folder on your EC2
+          target: "/home/${{ secrets.EC2_USER }}/app" # Destination folder on your EC2
           strip_components: 1
+          rm: true
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
