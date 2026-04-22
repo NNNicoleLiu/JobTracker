@@ -189,8 +189,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-
 # if the datasets is very large, pagination is helpful to improve performance
 # REST_FRAMEWORK = {
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -222,8 +220,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # Redirect URLs after social login
 SOCIALACCOUNT_LOGIN_ON_GET = True
-LOGIN_REDIRECT_URL = 'http://localhost:8000/auth/google/callback/' # Your frontend URL
-ACCOUNT_LOGOUT_REDIRECT_URL = 'http://localhost:8000/accounts/'
+LOGIN_REDIRECT_URL = '/auth/google/callback/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/'
 
 
 # JWT Settings
