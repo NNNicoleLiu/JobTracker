@@ -1,19 +1,13 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
-# Set work directory
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy project files
 COPY . .
 
-# Expose port
-EXPOSE 5173
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 
-# Start development server
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+RUN npm run build
