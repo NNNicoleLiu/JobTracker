@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: [actions/checkout@v4](https://github.com)
 
       - name: Copy files to EC2
         uses: [appleboy/scp-action@v1](https://github.com/appleboy/scp-action)
