@@ -1,26 +1,36 @@
-# ---- base ----
-FROM node:20-alpine AS base
+# ---- development stage ----
+FROM node:20-alpine AS dev
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# ---- development stage ----
-FROM base AS dev
 COPY . .
 EXPOSE 5173
 CMD ["npm", "run", "dev", "--", "--host"]
 
-# ---- build stage ----
-FROM base AS builder
+# -------- BUILD STAGE --------
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
 COPY . .
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
+
 RUN npm run build
 
-# ---- production stage ----
-FROM node:20-alpine AS prod
+
+# -------- RUN STAGE --------
+FROM node:20-alpine
+
 WORKDIR /app
+
 RUN npm install -g serve
-COPY --from=builder /app/dist ./dist
-EXPOSE 5173
-CMD ["serve", "-s", "dist", "-l", "5173"]
+
+# IMPORTANT: ensure dist exists
+COPY --from=builder /app/dist /app/dist
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
