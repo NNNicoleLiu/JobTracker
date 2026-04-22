@@ -12,11 +12,15 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
-from decouple import config
+from decouple import Config, RepositoryEnv
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+env_path = os.path.join(BASE_DIR, ".env")
+
+config = Config(RepositoryEnv(env_path))
 
 
 # Quick-start development settings - unsuitable for production
@@ -118,7 +122,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DB_NAME', default='job_tracker_db'),
         'USER': config('DB_USER', default='job_tracker_user'),
-        'PASSWORD': config('DB_PASSWORD'),
+        'PASSWORD': config('DB_PASSWORD', default='job_tracker_user'),
         'HOST': config('DB_HOST', default='localhost'),
         'PORT': config('DB_PORT', default='5432'),
     }
