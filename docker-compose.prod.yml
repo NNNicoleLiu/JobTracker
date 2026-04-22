@@ -18,10 +18,11 @@ services:
       - db
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://52.62.237.44:8000
     restart: always
-    environment:
-      - VITE_API_URL=http://52.62.237.44:8000
     ports:
       - "3000:3000"
     depends_on:
