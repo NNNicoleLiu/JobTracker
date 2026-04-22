@@ -1,4 +1,4 @@
-FROM node:20-alpine as build
+FROM node:20-alpine
 
 # Set work directory
 WORKDIR /app
@@ -9,14 +9,11 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Copy project files
 COPY . .
-RUN npm run build
 
-# Production container
-FROM nginx:alpine
+# Expose port
+EXPOSE 5173
 
-COPY --from=build /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Start development server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

@@ -1,40 +1,59 @@
-version: "3.9"
-
 services:
-  postgres:
-    image: postgres:15
-    container_name: jobtracker_db
-    restart: always
-    environment:
-      POSTGRES_DB: jobtracker
-      POSTGRES_USER: jobuser
-      POSTGRES_PASSWORD: strongpassword
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: job_tracker_db
+    env_file:
+      - ./backend/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+    ports:
+      - "5432:5432"
+    networks:
+      - job_tracker_network
+  # Django Backend
   backend:
-    build: ./backend
-    container_name: backend
-    command: python manage.py runserver 0.0.0.0:8000
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: job_tracker_backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
+    ports:
+      - "8000:8000"
     env_file:
       - ./backend/.env
     depends_on:
-      - postgres
-    ports:
-      - "8000:8000"
+      - db
+    networks:
+      - job_tracker_network
 
+  # Vite + React Frontend
   frontend:
-    build: ./frontend
-    container_name: react
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: job_tracker_frontend
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     ports:
       - "5173:5173"
-    command: npm run dev
+    environment:
+      - VITE_API_URL=http://localhost:8000
     depends_on:
       - backend
+    networks:
+      - job_tracker_network
+    stdin_open: true
+    tty: true
 
 volumes:
   postgres_data:
+
+networks:
+  job_tracker_network:
+    driver: bridge

@@ -16,4 +16,3 @@ build
 *.sqlite3
 db.sqlite3
 *.log
-.env
