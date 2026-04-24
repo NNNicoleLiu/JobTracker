@@ -1,6 +1,6 @@
 from django.db import migrations
 
-def create_google_socialapp(apps, schema_editor):
+def create_social_app(apps, schema_editor):
     import os
 
     SocialApp = apps.get_model("socialaccount", "SocialApp")
@@ -9,7 +9,14 @@ def create_google_socialapp(apps, schema_editor):
     client_id = os.environ.get("GOOGLE_CLIENT_ID")
     secret = os.environ.get("GOOGLE_CLIENT_SECRET")
 
-    site = Site.objects.get(id=1)
+    # get_or_create guarantees a Site row exists on any fresh DB (CI, new dev env, etc.)
+    site, _ = Site.objects.get_or_create(
+        pk=1,
+        defaults={
+            'domain': 'localhost',
+            'name':   'localhost',
+        },
+    )
 
     app, created = SocialApp.objects.get_or_create(
         provider="google",
@@ -23,6 +30,9 @@ def create_google_socialapp(apps, schema_editor):
     if created:
         app.sites.add(site)
 
+def reverse_social_app(apps, schema_editor):
+    SocialApp = apps.get_model('socialaccount', 'SocialApp')
+    SocialApp.objects.filter(provider='google').delete()
 
 class Migration(migrations.Migration):
 
@@ -33,5 +43,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_google_socialapp),
+        migrations.RunPython(create_social_app, reverse_social_app),
     ]
