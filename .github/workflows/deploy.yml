@@ -1,0 +1,42 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy files to EC2
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: "." # The path to files you want to copy (e.g., "dist/*" or ".")
+          target: "/home/${{ secrets.EC2_USER }}/app" # Destination folder on your EC2
+          strip_components: 1
+          rm: true
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 1. Move to the project directory on your server
+            cd /home/${{ secrets.EC2_USER }}/app
+
+            # 2. Build and restart your containers
+            sudo docker compose up -d --build
+
+            # 3. Optional: Clean up unused Docker images to save disk space
+            sudo docker system prune -a -f
+            sudo docker volume prune -f

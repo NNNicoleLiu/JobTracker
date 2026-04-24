@@ -3,10 +3,8 @@ services:
   db:
     image: postgres:15-alpine
     container_name: job_tracker_db
-    environment:
-      POSTGRES_DB: job_tracker_db
-      POSTGRES_USER: job_tracker_user
-      POSTGRES_PASSWORD: secure_password_123
+    env_file:
+      - ./backend/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -21,18 +19,13 @@ services:
     container_name: job_tracker_backend
     command: >
       sh -c "python manage.py migrate &&
-             python manage.py loaddata fixtures/socialapp.json &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
-    environment:
-      - DB_NAME=job_tracker_db
-      - DB_USER=job_tracker_user
-      - DB_PASSWORD=secure_password_123
-      - DB_HOST=db
-      - DB_PORT=5432
+    env_file:
+      - ./backend/.env
     depends_on:
       - db
     networks:
@@ -43,6 +36,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: dev
     container_name: job_tracker_frontend
     volumes:
       - ./frontend:/app
@@ -50,7 +44,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - VITE_API_URL=http://52.62.237.44:8000
     depends_on:
       - backend
     networks:

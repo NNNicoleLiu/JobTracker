@@ -30,6 +30,9 @@ SECRET_KEY = config('SECRET_KEY', default='your-secret-key-change-in-production'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 # ALLOWED_HOSTS = [
 #     'localhost',
 #     '127.0.0.1',
@@ -105,6 +108,7 @@ WSGI_APPLICATION = 'JTA.wsgi.application'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'http://52.62.237.44:5173'
 ]
 # default port number if use vite to create React app
 
@@ -116,11 +120,11 @@ CORS_ALLOW_CREDENTIALS = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='job_tracker_db'),
-        'USER': config('DB_USER', default='job_tracker_user'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST', default='localhost'),
+        'PORT': config('POSTGRES_PORT', default='5432'),
     }
 }
 
@@ -186,8 +190,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-
 # if the datasets is very large, pagination is helpful to improve performance
 # REST_FRAMEWORK = {
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -219,8 +221,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # Redirect URLs after social login
 SOCIALACCOUNT_LOGIN_ON_GET = True
-LOGIN_REDIRECT_URL = 'http://localhost:8000/auth/google/callback/' # Your frontend URL
-ACCOUNT_LOGOUT_REDIRECT_URL = 'http://localhost:8000/accounts/'
+LOGIN_REDIRECT_URL = '/auth/google/callback/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/'
 
 
 # JWT Settings
