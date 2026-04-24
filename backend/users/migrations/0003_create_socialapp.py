@@ -22,8 +22,8 @@ def create_social_app(apps, schema_editor):
         provider="google",
         name="Google",
         defaults={
-            "client_id": client_id,
-            "secret": secret,
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID') or 'placeholder',  # ← never None
+            'secret':    os.environ.get('GOOGLE_CLIENT_SECRET') or 'placeholder',
         },
     )
 
