@@ -154,6 +154,11 @@ REST_AUTH = {
     'TOKEN_MODEL': None,
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://jobtracker.miagamestudio.com',
+    'https://www.jobtracker.miagamestudio.com',
+]
+
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
