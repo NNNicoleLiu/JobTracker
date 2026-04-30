@@ -1,6 +1,9 @@
 version: "3.9"
 
 services:
+  frontend:
+    scale: 0
+
   db:
     image: postgres:15-alpine
     restart: always
