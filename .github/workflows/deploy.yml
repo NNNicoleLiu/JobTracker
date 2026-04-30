@@ -34,8 +34,19 @@ jobs:
             # 1. Move to the project directory on your server
             cd /home/${{ secrets.EC2_USER }}/app
 
-            # 2. Clean up unused images before build
-            sudo docker image prune -a -f
+            # 2. Clean up before build
+
+            # Stop the stack 
+            sudo docker compose \
+              -f docker-compose.yml \
+              -f docker-compose.prod.yml \
+              down --remove-orphans || true
+
+            # Remove unused images 
+            sudo docker image prune -a -f || true
+
+            # Remove stopped containers 
+            sudo docker container prune -f || true
 
             # 3. Build and restart your containers
             sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
