@@ -15,7 +15,7 @@ const LoginGoogle = () => {
 
       try {
         // Send access_token to backend
-        const response = await axios.post(`${config.API_URL}/auth/google/"`, {
+        const response = await axios.post(`${config.API_URL}/auth/google/`, {
           access_token: tokenResponse.access_token,
         });
 
