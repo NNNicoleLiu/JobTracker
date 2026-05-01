@@ -20,13 +20,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import AlertMsg from "./Alertmsg";
 
 const JobEdit = (props) => {
-  // console.log(props);
   const navigate = useNavigate();
   const [formData, setFormData] = React.useState({
     company: "",
     position: "",
     status: "Applied",
-    applied_at: new Date().toISOString(),
+    applied_at: new Date().toLocaleDateString("en-CA"),
     link: "",
     comment: "",
   });
@@ -40,13 +39,13 @@ const JobEdit = (props) => {
   // Populate form when editing
   React.useEffect(() => {
     if (props.editData) {
-      console.log(props.editData.applied_at);
       setFormData({
         company: props.editData.company || "",
         position: props.editData.position || "",
         status: props.editData.status || "Applied",
         applied_at:
-          props.editData.applied_at.toString() || new Date().toISOString(),
+          props.editData.applied_at.toString() ||
+          new Date().toLocaleDateString("en-CA"),
         link: props.editData.link || "",
         comment: props.editData.comment || "",
       });
@@ -56,7 +55,7 @@ const JobEdit = (props) => {
         company: "",
         position: "",
         status: "Applied",
-        applied_at: new Date().toISOString(),
+        applied_at: new Date().toLocaleDateString("en-CA"),
         link: "",
         comment: "",
       });
@@ -65,7 +64,6 @@ const JobEdit = (props) => {
 
   const handleChange = (field) => (event) => {
     let newValue = event.target.value;
-    // console.log(field);
     if (field === "applied_at") {
       newValue = newValue + "T" + formData.applied_at.toString().split("T")[1];
     }
@@ -76,27 +74,21 @@ const JobEdit = (props) => {
   };
 
   const handleSave = async () => {
-    // console.log(formData);
     try {
       if (props.editData) {
         const response = await api.put(`/jobs/${props.editData.id}/`, formData);
-        console.log("Edit job:", response.data);
       } else {
         const response = await api.post("/jobs/", formData);
-        console.log("Create job:", response.data);
       }
       handleClose();
     } catch (err) {
-      console.log("Response Data:", err.response.data);
       if (err.response.data.company) {
         setCompanyError(true);
         setCompanyMsg(err.response.data.company);
-        console.log(companyMsg);
       }
       if (err.response.data.position) {
         setPositionError(true);
         setPositionMsg(err.response.data.position);
-        console.log(positionMsg);
       }
     }
   };
@@ -106,7 +98,7 @@ const JobEdit = (props) => {
       company: "",
       position: "",
       status: "Applied",
-      applied_at: new Date().toISOString(),
+      applied_at: new Date().toLocaleDateString("en-CA"),
       link: "",
       comment: "",
     });
