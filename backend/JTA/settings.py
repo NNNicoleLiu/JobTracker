@@ -106,12 +106,13 @@ WSGI_APPLICATION = 'JTA.wsgi.application'
 
 # CORS settings for development
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://52.62.237.44:5173'
+    # 'http://localhost:5173',
+    # 'http://127.0.0.1:5173',
+    'https://jobtracker.miagamestudio.com',
+    'https://www.jobtracker.miagamestudio.com',
 ]
 # default port number if use vite to create React app
-
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
 # Tell Django it is behind an HTTPS proxy (Nginx)
@@ -149,7 +150,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
