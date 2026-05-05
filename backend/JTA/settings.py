@@ -17,15 +17,9 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-#_4$k-=^!qhz81y+zsyojr63@(lv_i5m9^i_cb!q7a-$g#w6*a'
-SECRET_KEY = config('SECRET_KEY', default='your-secret-key-change-in-production')
-
+ENVIRONMENT   = config('DJANGO_ENV', default='development')
+IS_PRODUCTION = ENVIRONMENT == 'production'
+SECRET_KEY    = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
@@ -99,15 +93,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'JTA.wsgi.application'
 
 # CORS settings for development
-CORS_ALLOWED_ORIGINS = [
-    # 'http://localhost:5173',
-    # 'http://127.0.0.1:5173',
-    'https://jobtracker.miagamestudio.com',
-    'https://www.jobtracker.miagamestudio.com',
-]
-# default port number if use vite to create React app
-CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+if IS_PRODUCTION:
+    CORS_ALLOWED_ORIGINS = [
+        'https://jobtracker.miagamestudio.com',
+        'https://www.jobtracker.miagamestudio.com',
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'http://127.0.0.1:5173',
+    ]
+
 
 # Tell Django it is behind an HTTPS proxy (Nginx)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -152,10 +152,17 @@ REST_AUTH = {
     'TOKEN_MODEL': None,
 }
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://jobtracker.miagamestudio.com',
-    'https://www.jobtracker.miagamestudio.com',
-]
+# ── Production-only security ───────────────────────────────────────────────────
+if IS_PRODUCTION:
+    SECURE_PROXY_SSL_HEADER           = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT               = True
+    SESSION_COOKIE_SECURE             = True
+    CSRF_COOKIE_SECURE                = True
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+    CSRF_TRUSTED_ORIGINS = [
+        'https://jobtracker.miagamestudio.com',
+        'https://www.jobtracker.miagamestudio.com',
+    ]
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
