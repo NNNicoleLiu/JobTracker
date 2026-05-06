@@ -4,6 +4,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { Button } from "@mui/material";
 import google from "../assets/google.jpg";
+import config from "../config";
 
 const LoginGoogle = () => {
   const navigate = useNavigate();
@@ -14,12 +15,9 @@ const LoginGoogle = () => {
 
       try {
         // Send access_token to backend
-        const response = await axios.post(
-          "http://localhost:8000/auth/google/",
-          {
-            access_token: tokenResponse.access_token,
-          }
-        );
+        const response = await axios.post(`${config.API_URL}/auth/google/`, {
+          access_token: tokenResponse.access_token,
+        });
 
         console.log("response:", response.data);
 
@@ -34,7 +32,7 @@ const LoginGoogle = () => {
         console.error("Google login failed:", error.response?.data);
         alert(
           "Google login failed: " +
-            (error.response?.data?.detail || "Unknown error")
+            (error.response?.data?.detail || "Unknown error"),
         );
       }
     },

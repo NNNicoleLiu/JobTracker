@@ -4,6 +4,7 @@ import config from "../config";
 // Create axios instance
 const api = axios.create({
   baseURL: config.API_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,7 +21,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor - Handle token refresh
@@ -43,7 +44,7 @@ api.interceptors.response.use(
             `${config.API_URL}/auth/token/refresh/`,
             {
               refresh: refreshToken,
-            }
+            },
           );
 
           const { access } = response.data;
@@ -73,7 +74,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

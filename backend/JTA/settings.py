@@ -17,15 +17,10 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-#_4$k-=^!qhz81y+zsyojr63@(lv_i5m9^i_cb!q7a-$g#w6*a'
-SECRET_KEY = config('SECRET_KEY', default='your-secret-key-change-in-production')
-
+ENVIRONMENT   = config('DJANGO_ENV', default='development')
+print('ENVIRONMENT', ENVIRONMENT)
+IS_PRODUCTION = ENVIRONMENT == 'production'
+SECRET_KEY    = config('SECRET_KEY', default='default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
@@ -33,13 +28,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# ALLOWED_HOSTS = [
-#     'localhost',
-#     '127.0.0.1',
-#     '0.0.0.0',
-#     'backend',  # Docker service name
-# ]
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
 
 
 # Application definition
@@ -105,14 +94,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'JTA.wsgi.application'
 
 # CORS settings for development
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://52.62.237.44:5173'
-]
-# default port number if use vite to create React app
-
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+if IS_PRODUCTION:
+    CORS_ALLOWED_ORIGINS = [
+        'https://jobtracker.miagamestudio.com',
+        'https://www.jobtracker.miagamestudio.com',
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'http://127.0.0.1:5173',
+    ]
+
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -146,13 +142,25 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
 REST_AUTH = {
     'TOKEN_MODEL': None,
 }
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# ── Production-only security ───────────────────────────────────────────────────
+if IS_PRODUCTION:
+    # SECURE_SSL_REDIRECT               = True
+    SESSION_COOKIE_SECURE             = True
+    CSRF_COOKIE_SECURE                = True
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+    CSRF_TRUSTED_ORIGINS = [
+        'https://jobtracker.miagamestudio.com',
+        'https://www.jobtracker.miagamestudio.com',
+    ]
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

@@ -2,7 +2,7 @@ name: Deploy to EC2
 
 on:
   push:
-    branches: [main]
+    branches: [JWT]
   workflow_dispatch:
 
 jobs:
@@ -34,9 +34,19 @@ jobs:
             # 1. Move to the project directory on your server
             cd /home/${{ secrets.EC2_USER }}/app
 
-            # 2. Build and restart your containers
-            sudo docker compose up -d --build
+            # 2. Clean up before build
 
-            # 3. Optional: Clean up unused Docker images to save disk space
-            sudo docker system prune -a -f
-            sudo docker volume prune -f
+            # Stop the stack 
+            sudo docker compose \
+              -f docker-compose.yml \
+              -f docker-compose.prod.yml \
+              down --remove-orphans || true
+
+            # Remove unused images 
+            sudo docker image prune -a -f || true
+
+            # Remove stopped containers 
+            sudo docker container prune -f || true
+
+            # 3. Build and restart your containers
+            sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
