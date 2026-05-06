@@ -18,6 +18,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENVIRONMENT   = config('DJANGO_ENV', default='development')
+print('ENVIRONMENT', ENVIRONMENT)
 IS_PRODUCTION = ENVIRONMENT == 'production'
 SECRET_KEY    = config('SECRET_KEY')
 
@@ -187,7 +188,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-# TIME_ZONE = 'Etc/UTC'
+TIME_ZONE = 'Etc/UTC'
 
 USE_I18N = True
 
