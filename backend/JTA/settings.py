@@ -109,9 +109,6 @@ else:
     ]
 
 
-# Tell Django it is behind an HTTPS proxy (Nginx)
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
