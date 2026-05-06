@@ -4,7 +4,7 @@ services:
     image: postgres:15-alpine
     container_name: job_tracker_db
     env_file:
-      - ./backend/.env
+      - ./backend/.env.development
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
