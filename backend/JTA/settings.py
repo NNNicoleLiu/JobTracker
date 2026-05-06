@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ENVIRONMENT   = config('DJANGO_ENV', default='development')
 print('ENVIRONMENT', ENVIRONMENT)
 IS_PRODUCTION = ENVIRONMENT == 'production'
-SECRET_KEY    = config('SECRET_KEY')
+SECRET_KEY    = config('SECRET_KEY', default='default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
@@ -150,10 +150,10 @@ REST_AUTH = {
     'TOKEN_MODEL': None,
 }
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # ── Production-only security ───────────────────────────────────────────────────
 if IS_PRODUCTION:
-    SECURE_PROXY_SSL_HEADER           = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT               = True
+    # SECURE_SSL_REDIRECT               = True
     SESSION_COOKIE_SECURE             = True
     CSRF_COOKIE_SECURE                = True
     SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
