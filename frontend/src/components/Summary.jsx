@@ -5,8 +5,15 @@ import offer from "../assets/contract.png";
 import interview from "../assets/interview.png";
 import resume from "../assets/Resume.png";
 import apply from "../assets/apply.png";
+import { useFilter } from "../pages/Dashboard";
 
-const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
+const StatusDiv = ({
+  bgColor,
+  textColor = "black",
+  status,
+  count,
+  updateFilter,
+}) => {
   const sty = {
     height: "94px",
     width: "13.5%",
@@ -19,9 +26,10 @@ const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
     flexDirection: "column",
     justifyContent: "center",
     color: textColor,
+    cursor: "pointer",
   };
   return (
-    <div style={sty}>
+    <div style={sty} onClick={() => updateFilter("status", status)}>
       <Typography
         component="div"
         sx={{
@@ -47,9 +55,11 @@ const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
 };
 
 const Summary = ({ rows }) => {
+  const { filters, updateFilter, filteredData } = useFilter();
   const countStatus = (status) => {
-    return rows.filter((row) => row.status === status).length;
+    return filteredData.filter((row) => row.status === status).length;
   };
+
   return (
     <>
       <Box
@@ -72,7 +82,6 @@ const Summary = ({ rows }) => {
             maxHeight: "240px",
             width: "18%",
             maxWidth: "240px",
-            // margin: "0 20px",
           }}
         />
         <img
@@ -83,7 +92,6 @@ const Summary = ({ rows }) => {
             maxHeight: "300px",
             width: "20%",
             maxWidth: "300px",
-            // margin: "0 20px",
           }}
         />
         <img
@@ -94,7 +102,6 @@ const Summary = ({ rows }) => {
             maxHeight: "240px",
             width: "18%",
             maxWidth: "240px",
-            // margin: "0 20px",
           }}
         />
         <img
@@ -105,30 +112,8 @@ const Summary = ({ rows }) => {
             maxHeight: "240px",
             width: "18%",
             maxWidth: "240px",
-            // margin: "0 20px",
-
-            // height: "240px", width: "240px", margin: "0 40px"
           }}
         />
-        {/* <Box sx={{ mx: "40px" }}>
-          <Typography
-            variant="h3"
-            component="div"
-            sx={{ fontFamily: "Inder, sans-serif" }}
-          >
-            Job Application Tracker
-          </Typography>
-          <Typography
-            sx={{
-              my: 1,
-              ml: 4,
-              fontSize: "22px",
-              fontFamily: "Inder, sans-serif",
-            }}
-          >
-            Track and Manage your Job Applications !!
-          </Typography>
-        </Box> */}
         <img
           src={offer}
           alt="Job Offer"
@@ -137,8 +122,6 @@ const Summary = ({ rows }) => {
             maxHeight: "220px",
             width: "17%",
             maxWidth: "220px",
-            // margin: "0 20px",
-            // height: "220px", width: "220px", margin: "0 40px"
           }}
         />
       </Box>
@@ -154,37 +137,42 @@ const Summary = ({ rows }) => {
           m: "0 auto",
         }}
       >
-        {/* need to update the counts */}
         <StatusDiv
           bgColor="#36454F"
           textColor="white"
           status="All"
-          count={rows.length}
+          count={filteredData.length}
+          updateFilter={updateFilter}
         />
         <StatusDiv
           bgColor="#b8d3ff"
           status="Applied"
           count={countStatus("Applied")}
+          updateFilter={updateFilter}
         />
         <StatusDiv
           bgColor="#ffe5a0"
           status="Interview"
           count={countStatus("Interview")}
+          updateFilter={updateFilter}
         />
         <StatusDiv
           bgColor="#93e3a9"
           status="Offer"
           count={countStatus("Offer")}
+          updateFilter={updateFilter}
         />
         <StatusDiv
           bgColor="#ffe3dc"
           status="Rejected"
           count={countStatus("Rejected")}
+          updateFilter={updateFilter}
         />
         <StatusDiv
           bgColor="#c4cad4"
           status="Withdrawn"
           count={countStatus("Withdrawn")}
+          updateFilter={updateFilter}
         />
       </Box>
     </>
