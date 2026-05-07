@@ -96,7 +96,7 @@ const Summary = ({ rows }) => {
   };
   const clickDiv = (status) => {
     updateFilter("status", status);
-    setSelected((prev) => (prev === status ? null : status));
+    setSelected(status);
   };
 
   return (
