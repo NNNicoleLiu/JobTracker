@@ -20,17 +20,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import JobEdit from "./JobEdit";
 import DeleteModal from "./DeleteModal";
 import { useFilter } from "../pages/Dashboard";
-
-const setStatusColor = (status) => {
-  const colors = {
-    Applied: "#b8d3ff",
-    Interview: "#ffe5a0",
-    Offer: "#93e3a9",
-    Rejected: "#ffe3dc",
-    Withdrawn: "#c4cad4",
-  };
-  return colors[status];
-};
+import { setStatusColor } from "./StatusColor";
 
 const BORDER = "1px solid #8F8C8C";
 const boxStyle = {
@@ -49,8 +39,9 @@ const contentStyle = {
 };
 
 const Overview = ({ rows }) => {
-  const [filterRows, setFilterRows] = React.useState([]);
   const { filters, updateFilter, filteredData } = useFilter();
+
+  const [filterRows, setFilterRows] = React.useState([]);
   const [openJob, setOpenJob] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
   const [deleteId, setDeleteId] = React.useState(null);
@@ -58,7 +49,6 @@ const Overview = ({ rows }) => {
   const [hoveredRow, setHoveredRow] = React.useState(null);
 
   const filteredApp = (rows, filters) => {
-    console.log(filters.status);
     if (filters.status === "All") {
       return rows;
     }
@@ -166,7 +156,7 @@ const Overview = ({ rows }) => {
         style={{
           width: "1300px",
           margin: "0 auto",
-          marginBottom: "20px",
+          marginBottom: "40px",
           borderCollapse: "collapse",
         }}
       >
