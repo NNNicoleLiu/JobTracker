@@ -40,14 +40,12 @@ const JobEdit = (props) => {
   React.useEffect(() => {
     if (props.editData) {
       setFormData({
-        company: props.editData.company || "",
-        position: props.editData.position || "",
-        status: props.editData.status || "Applied",
-        applied_at:
-          props.editData.applied_at.toString() ||
-          new Date().toLocaleDateString("en-CA"),
-        link: props.editData.link || "",
-        comment: props.editData.comment || "",
+        company: props.editData.company,
+        position: props.editData.position,
+        status: props.editData.status,
+        applied_at: props.editData.applied_at.toString(),
+        link: props.editData.link,
+        comment: props.editData.comment,
       });
     } else {
       // Reset form for new application
@@ -65,7 +63,12 @@ const JobEdit = (props) => {
   const handleChange = (field) => (event) => {
     let newValue = event.target.value;
     if (field === "applied_at") {
-      newValue = newValue + "T" + formData.applied_at.toString().split("T")[1];
+      if (props.editData) {
+        newValue += "T" + props.editData.applied_at.toString().split("T")[1];
+      } else {
+        newValue +=
+          "T" + new Date().toLocaleTimeString("en-US", { hour12: false });
+      }
     }
     setFormData({
       ...formData,
