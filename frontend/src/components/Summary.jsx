@@ -5,12 +5,25 @@ import offer from "../assets/contract.png";
 import interview from "../assets/interview.png";
 import resume from "../assets/Resume.png";
 import apply from "../assets/apply.png";
+import { useFilter } from "../pages/Dashboard";
+import { setStatusColor } from "./StatusColor";
 
-const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
+const statusList = [
+  "All",
+  "Applied",
+  "Interview",
+  "Offer",
+  "Rejected",
+  "Withdrawn",
+];
+
+const StatusDiv = ({ bgColor, status, count, filter, updateFilter }) => {
+  const [selected, setSelected] = React.useState(null);
+  const [hoverStatus, setHoveredStatus] = React.useState(null);
   const sty = {
-    height: "94px",
+    height: selected === status ? "110px" : "92px",
     width: "13.5%",
-    minWidth: "150px",
+    minWidth: "160px",
     maxWidth: "210px",
     backgroundColor: bgColor,
     borderRadius: "20px",
@@ -18,10 +31,23 @@ const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    color: textColor,
+    color: status === "All" ? "white" : "black",
+    cursor: "pointer",
+    border: hoverStatus === status ? "2px solid blue" : "2px solid white",
+  };
+
+  const clickDiv = () => {
+    // setSelected("");
+    updateFilter("status", status);
+    setSelected((prev) => (prev === status ? null : status));
   };
   return (
-    <div style={sty}>
+    <div
+      style={sty}
+      onClick={clickDiv}
+      onMouseEnter={() => setHoveredStatus(status)}
+      onMouseLeave={() => setHoveredStatus(null)}
+    >
       <Typography
         component="div"
         sx={{
@@ -47,9 +73,32 @@ const StatusDiv = ({ bgColor, textColor = "black", status, count }) => {
 };
 
 const Summary = ({ rows }) => {
-  const countStatus = (status) => {
-    return rows.filter((row) => row.status === status).length;
+  const { filters, updateFilter, filteredData } = useFilter();
+  const [selected, setSelected] = React.useState("All");
+  const [hoverStatus, setHoveredStatus] = React.useState(null);
+  const sty = {
+    height: "92px",
+    width: "13%",
+    minWidth: "160px",
+    maxWidth: "210px",
+    borderRadius: "20px",
+    margin: "12px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    cursor: "pointer",
   };
+  const countStatus = (status) => {
+    if (status === "All") {
+      return filteredData.length;
+    }
+    return filteredData.filter((row) => row.status === status).length;
+  };
+  const clickDiv = (status) => {
+    updateFilter("status", status);
+    setSelected(status);
+  };
+
   return (
     <>
       <Box
@@ -72,7 +121,6 @@ const Summary = ({ rows }) => {
             maxHeight: "240px",
             width: "18%",
             maxWidth: "240px",
-            // margin: "0 20px",
           }}
         />
         <img
@@ -83,7 +131,6 @@ const Summary = ({ rows }) => {
             maxHeight: "300px",
             width: "20%",
             maxWidth: "300px",
-            // margin: "0 20px",
           }}
         />
         <img
@@ -94,7 +141,6 @@ const Summary = ({ rows }) => {
             maxHeight: "240px",
             width: "18%",
             maxWidth: "240px",
-            // margin: "0 20px",
           }}
         />
         <img
@@ -105,30 +151,8 @@ const Summary = ({ rows }) => {
             maxHeight: "240px",
             width: "18%",
             maxWidth: "240px",
-            // margin: "0 20px",
-
-            // height: "240px", width: "240px", margin: "0 40px"
           }}
         />
-        {/* <Box sx={{ mx: "40px" }}>
-          <Typography
-            variant="h3"
-            component="div"
-            sx={{ fontFamily: "Inder, sans-serif" }}
-          >
-            Job Application Tracker
-          </Typography>
-          <Typography
-            sx={{
-              my: 1,
-              ml: 4,
-              fontSize: "22px",
-              fontFamily: "Inder, sans-serif",
-            }}
-          >
-            Track and Manage your Job Applications !!
-          </Typography>
-        </Box> */}
         <img
           src={offer}
           alt="Job Offer"
@@ -137,8 +161,6 @@ const Summary = ({ rows }) => {
             maxHeight: "220px",
             width: "17%",
             maxWidth: "220px",
-            // margin: "0 20px",
-            // height: "220px", width: "220px", margin: "0 40px"
           }}
         />
       </Box>
@@ -154,38 +176,47 @@ const Summary = ({ rows }) => {
           m: "0 auto",
         }}
       >
-        {/* need to update the counts */}
-        <StatusDiv
-          bgColor="#36454F"
-          textColor="white"
-          status="All"
-          count={rows.length}
-        />
-        <StatusDiv
-          bgColor="#b8d3ff"
-          status="Applied"
-          count={countStatus("Applied")}
-        />
-        <StatusDiv
-          bgColor="#ffe5a0"
-          status="Interview"
-          count={countStatus("Interview")}
-        />
-        <StatusDiv
-          bgColor="#93e3a9"
-          status="Offer"
-          count={countStatus("Offer")}
-        />
-        <StatusDiv
-          bgColor="#ffe3dc"
-          status="Rejected"
-          count={countStatus("Rejected")}
-        />
-        <StatusDiv
-          bgColor="#c4cad4"
-          status="Withdrawn"
-          count={countStatus("Withdrawn")}
-        />
+        {Object.entries(statusList).map((status, index) => {
+          return (
+            <div
+              key={index}
+              style={{
+                ...sty,
+                backgroundColor: setStatusColor(status[1]),
+                color: status[1] === "All" ? "white" : "black",
+                transform: selected === status[1] ? "scale(1.2)" : "scale(1)",
+                border:
+                  hoverStatus === status[1]
+                    ? "3px solid blue"
+                    : "1px solid white",
+              }}
+              onClick={() => clickDiv(status[1])}
+              onMouseEnter={() => setHoveredStatus(status[1])}
+              onMouseLeave={() => setHoveredStatus(null)}
+            >
+              <Typography
+                component="div"
+                sx={{
+                  textAlign: "center",
+                  fontSize: "27px",
+                  fontFamily: "Inder, sans-serif",
+                }}
+              >
+                {status[1]}
+              </Typography>
+              <Typography
+                sx={{
+                  textAlign: "center",
+                  fontSize: "24px",
+                  mt: 1,
+                  fontFamily: "Inder, sans-serif",
+                }}
+              >
+                {countStatus(status[1])}
+              </Typography>
+            </div>
+          );
+        })}
       </Box>
     </>
   );

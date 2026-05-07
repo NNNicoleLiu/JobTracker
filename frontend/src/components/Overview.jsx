@@ -13,41 +13,34 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 
 import JobEdit from "./JobEdit";
 import DeleteModal from "./DeleteModal";
-
-const setStatusColor = (status) => {
-  const colors = {
-    Applied: "#b8d3ff",
-    Interview: "#ffe5a0",
-    Offer: "#93e3a9",
-    Rejected: "#ffe3dc",
-    Withdrawn: "#c4cad4",
-  };
-  return colors[status];
-};
+import { useFilter } from "../pages/Dashboard";
+import { setStatusColor } from "./StatusColor";
 
 const BORDER = "1px solid #8F8C8C";
+const boxStyle = {
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const contentStyle = {
+  backgroundColor: "#ebebeb",
+  borderRadius: "20px",
+  width: "fit-content",
+  padding: "6px 12px",
+  margin: "8px",
+};
 
 const Overview = ({ rows }) => {
-  const boxStyle = {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  };
+  const { filters, updateFilter, filteredData } = useFilter();
 
-  const contentStyle = {
-    backgroundColor: "#ebebeb",
-    borderRadius: "20px",
-    width: "fit-content",
-    padding: "6px 12px",
-    margin: "8px",
-  };
   const [filterRows, setFilterRows] = React.useState([]);
   const [openJob, setOpenJob] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
@@ -55,44 +48,18 @@ const Overview = ({ rows }) => {
   const [editData, setEditData] = React.useState(null);
   const [hoveredRow, setHoveredRow] = React.useState(null);
 
-  const [searchTerm, setSearchTerm] = React.useState("");
-
-  // sort by applied date
-  const [date, setDate] = React.useState(false);
-
-  React.useEffect(() => {
-    const filtered = filteredApp(rows, searchTerm, date);
-    setFilterRows(filtered);
-  }, [date, searchTerm, rows]);
-
-  const filteredApp = (rows, searchTerm, date) => {
-    // use [...arr] will sort a copy instead of mutates the original
-    const sorted = (arr) =>
-      [...arr].sort((a, b) =>
-        date
-          ? new Date(a.applied_at) - new Date(b.applied_at)
-          : new Date(b.applied_at) - new Date(a.applied_at)
-      );
-
-    if (!searchTerm || searchTerm.trim() === "") {
-      return sorted(rows);
+  const filteredApp = (rows, filters) => {
+    if (filters.status === "All") {
+      return rows;
     }
-
-    const search = searchTerm.toLowerCase().trim();
-
-    return sorted(
-      rows.filter((app) => {
-        const company = app.company?.toLowerCase() || "";
-        const position = app.position?.toLowerCase() || "";
-        return company.includes(search) || position.includes(search);
-      })
-    );
+    return rows.filter((row) => {
+      return row.status === filters.status;
+    });
   };
-
-  const clickSearch = () => {
-    const filtered = filteredApp(rows, searchTerm, date);
+  React.useEffect(() => {
+    const filtered = filteredApp(filteredData, filters);
     setFilterRows(filtered);
-  };
+  }, [filters]);
 
   const clickAdd = () => {
     setEditData(null);
@@ -102,10 +69,6 @@ const Overview = ({ rows }) => {
   const clickRow = (data) => {
     setEditData(data);
     setOpenJob(true);
-  };
-
-  const clickDate = () => {
-    setDate(!date);
   };
 
   return (
@@ -158,11 +121,6 @@ const Overview = ({ rows }) => {
               New
             </Button>
           </Tooltip>
-          <Tooltip title="Filter" placement="top">
-            <IconButton>
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
           <Box
             component="div"
             sx={{
@@ -176,15 +134,20 @@ const Overview = ({ rows }) => {
               bgcolor: "white",
             }}
           >
+            <SearchIcon color="action" />
             <InputBase
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search by company or position"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={filters.search}
+              onChange={(e) => updateFilter("search", e.target.value)}
             />
-            <IconButton type="button" aria-label="search">
-              <SearchIcon onClick={() => clickSearch(rows, searchTerm)} />
-            </IconButton>
+            {filters.search.trim().length > 0 && (
+              <Tooltip title="Clear" placement="right">
+                <IconButton type="button" aria-label="clear" size="small">
+                  <CloseIcon onClick={() => updateFilter("search", "")} />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         </Box>
       </div>
@@ -193,7 +156,7 @@ const Overview = ({ rows }) => {
         style={{
           width: "1300px",
           margin: "0 auto",
-          marginBottom: "20px",
+          marginBottom: "40px",
           borderCollapse: "collapse",
         }}
       >
@@ -235,7 +198,7 @@ const Overview = ({ rows }) => {
               <Box sx={boxStyle}>
                 <TodayIcon sx={{ ml: 1 }} />
                 &nbsp;Date Applied
-                <IconButton onClick={clickDate}>
+                <IconButton onClick={() => updateFilter("date", !filters.date)}>
                   <SwapVertIcon />
                 </IconButton>
               </Box>
@@ -256,7 +219,6 @@ const Overview = ({ rows }) => {
         </thead>
         <tbody>
           {Object.entries(filterRows).map((row, index) => {
-            // console.log(row);
             return (
               <tr
                 key={row[1].id}
