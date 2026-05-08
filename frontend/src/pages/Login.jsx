@@ -108,7 +108,7 @@ const Login = () => {
       <Container
         component="main"
         maxWidth="xs"
-        sx={{ pt: "100px", display: "flex", flexDirection: "column" }}
+        sx={{ pt: "90px", display: "flex", flexDirection: "column" }}
       >
         <h1 style={{ margin: "auto", marginBottom: "16px" }}>Welcome Back!</h1>
         {!emailLogin && (
@@ -186,6 +186,18 @@ const Login = () => {
           {"Don't have an account?"}
           <Link to="/register" style={{ paddingLeft: "8px" }}>
             Register Now
+          </Link>
+        </p>
+        <p
+          style={{
+            margin: "auto",
+            fontSize: "16px",
+            marginTop: "16px",
+            marginBottom: "40px",
+          }}
+        >
+          <Link to="/" style={{ paddingLeft: "8px" }}>
+            Go to Home Page
           </Link>
         </p>
       </Container>

@@ -115,7 +115,9 @@ const Register = () => {
         maxWidth="xs"
         sx={{ pt: "90px", display: "flex", flexDirection: "column" }}
       >
-        <h1 style={{ margin: "auto", marginBottom: "16px" }}>Register</h1>
+        <h1 style={{ margin: "auto", marginBottom: "16px" }}>
+          Get Offer Today!
+        </h1>
         {!emailRegister && (
           <Button
             startIcon={<EmailIcon sx={{ mr: "20px" }} fontSize="large" />}
@@ -213,10 +215,22 @@ const Register = () => {
         {/* {registerError && <AlertMsg msg={error.current} closeAlert = {() => setRegisterError(false)} />} */}
         <Divider sx={{ my: 3, fontSize: "15px", color: "grey" }}>OR</Divider>
         <LoginGoogle />
-        <p style={{ margin: "auto", fontSize: "16px", marginBottom: "40px" }}>
+        <p style={{ margin: "auto", fontSize: "16px" }}>
           Already have an account?
           <Link to="/login" style={{ paddingLeft: "8px" }}>
             Login
+          </Link>
+        </p>
+        <p
+          style={{
+            margin: "auto",
+            fontSize: "16px",
+            marginTop: "16px",
+            marginBottom: "40px",
+          }}
+        >
+          <Link to="/" style={{ paddingLeft: "8px" }}>
+            Go to Home Page
           </Link>
         </p>
       </Container>
