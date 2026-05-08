@@ -49,13 +49,12 @@ const Navbar = () => {
       // Clear storage
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      navigate("/login");
+      navigate("/");
     } catch (err) {
-      console.error("Logout error:", err);
       // Clear storage anyway
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      navigate("/login");
+      navigate("/");
     }
   };
 

@@ -31,8 +31,6 @@ urlpatterns = [
     path('auth/', include('users.urls')),
 
     # Google OAuth endpoints
-    # path('auth/social/', include('dj_rest_auth.urls')),
-    # path('auth/social/registration/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.urls')),  # Standard allauth URLs
 
     path('jobs/', include('jobs.urls'))
