@@ -17,7 +17,6 @@ const AlertMsg = ({ msg, closeAlert }) => {
             <CloseIcon></CloseIcon>
           </IconButton>
         }
-        // sx={{ mt: 1, mb: 1 }}
       >
         <div>
           {msg.map((value) => (

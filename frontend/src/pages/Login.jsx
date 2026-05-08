@@ -19,7 +19,6 @@ import EmailIcon from "@mui/icons-material/Email";
 
 const Login = () => {
   const navigate = useNavigate();
-  // const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
