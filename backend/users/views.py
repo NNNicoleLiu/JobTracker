@@ -127,7 +127,7 @@ class LogoutView(APIView):
     POST /auth/logout/
     Body: { "refresh": "refresh_token" }
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
     
     def post(self, request):
         try:
@@ -151,7 +151,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     GET/PATCH /auth/profile/
     Headers: Authorization: Bearer <access_token>
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     
     def get_object(self):
