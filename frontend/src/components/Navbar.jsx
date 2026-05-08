@@ -36,8 +36,6 @@ const Navbar = () => {
     setOpenProfile(true);
   };
 
-  // const clickSettings = () => {};
-
   const clickLogout = async () => {
     try {
       const refreshToken = localStorage.getItem("refresh_token");
@@ -48,7 +46,6 @@ const Navbar = () => {
           refresh: refreshToken,
         });
       }
-
       // Clear storage
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
@@ -147,16 +144,6 @@ const Navbar = () => {
               >
                 <AccountCircleIcon sx={{ mr: 2 }} /> Profile
               </MenuItem>
-              {/* <MenuItem
-              sx={{
-                fontFamily: "Inder, sans-serif",
-                fontSize: "20px",
-              }}
-              onClick={clickSettings}
-            >
-              <Settings sx={{ mr: 2 }} />
-              Settings
-            </MenuItem> */}
               <MenuItem
                 sx={{
                   fontFamily: "Inder, sans-serif",

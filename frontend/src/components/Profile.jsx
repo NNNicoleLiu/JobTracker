@@ -15,9 +15,8 @@ const Profile = (props) => {
     try {
       const response = await api.get("/auth/profile/");
       setProfile(response.data);
-      // console.log(response);
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      alert("Error fetching user profile");
     }
   };
 
@@ -63,9 +62,7 @@ const Profile = (props) => {
         </Box>
         <Divider />
         <p style={{ fontSize: "20px" }}>Name: {profile.name}</p>
-        {/* <Chip label="Edit" sx={{ px: 1 }} onClick={() => {}} /> */}
         <p style={{ fontSize: "20px" }}>Email: {profile.email}</p>
-        {/* <Button variant="contained">Reset Password</Button> */}
       </Box>
     </Modal>
   );

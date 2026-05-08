@@ -300,26 +300,6 @@ const Overview = ({ rows }) => {
           })}
         </tbody>
       </table>
-      {/* <Box
-        sx={{
-          width: "85%",
-          m: "0 auto",
-          mb: 2,
-          height: "48px",
-          borderBottom: BORDER,
-          display: "flex",
-          alignItems: "center",
-          pl: 3,
-        }}
-      >
-        <Chip
-          icon={<AddCircleOutlineIcon />}
-          label="Add Job"
-          color="primary"
-          sx={{ fontFamily: "Inder, sans-serif", fontSize: "15px", px: 1 }}
-          onClick={clickAdd}
-        />
-      </Box> */}
       <JobEdit open={openJob} setOpen={setOpenJob} editData={editData} />
       <DeleteModal open={openDelete} setOpen={setOpenDelete} id={deleteId} />
     </div>

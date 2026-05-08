@@ -26,13 +26,10 @@ const DeleteModal = (props) => {
   const clickYes = async () => {
     try {
       const response = await api.delete(`/jobs/${props.id}/`);
-      // alert("Information delete successfully!");
-      console.log("Response Data:", response.data);
       props.setOpen(false);
       navigate(0);
     } catch (err) {
       alert("Something wrong! Try again!");
-      console.log("Response Data:", res.data);
     }
   };
   const clickNo = () => props.setOpen(false);
