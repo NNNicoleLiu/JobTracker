@@ -1,0 +1,36 @@
+services:
+  # PostgreSQL Database
+  db:
+    env_file:
+      - ./backend/.env.development
+    ports:
+      - "5432:5432"
+
+  # Django Backend
+  backend:
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env.development
+    environment:
+      - POSTGRES_HOST=db
+
+  # Vite + React Frontend
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - job_tracker_network
+    stdin_open: true
+    tty: true
