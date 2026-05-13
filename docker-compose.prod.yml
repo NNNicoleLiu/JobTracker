@@ -46,6 +46,8 @@ services:
     volumes:
       - static_files:/app/staticfiles
       - media_files:/app/mediafiles
+    networks:
+      - job_tracker_network
 
 volumes:
   postgres_data:
