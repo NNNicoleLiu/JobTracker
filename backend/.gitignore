@@ -1,4 +1,5 @@
-.env
+.env.development
+.env.production
 .venv/
 *.pyc
 __pycache__/
