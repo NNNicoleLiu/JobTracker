@@ -3,58 +3,29 @@ services:
   db:
     image: postgres:15-alpine
     container_name: job_tracker_db
-    env_file:
-      - ./backend/.env.development
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     networks:
       - job_tracker_network
+
   # Django Backend
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: job_tracker_backend
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./backend/.env.development
-    environment:
-      - POSTGRES_HOST=db
     depends_on:
       - db
     networks:
       - job_tracker_network
 
-  # Vite + React Frontend
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-      target: dev
-    container_name: job_tracker_frontend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    ports:
-      - "5173:5173"
-    depends_on:
-      - backend
-    networks:
-      - job_tracker_network
-    stdin_open: true
-    tty: true
+    container_name: jobtracker_frontend
 
 volumes:
   postgres_data:
-
 networks:
   job_tracker_network:
     driver: bridge

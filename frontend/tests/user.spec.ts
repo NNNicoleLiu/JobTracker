@@ -38,5 +38,5 @@ test("User can logout", async ({ page }) => {
   await expect(page).toHaveURL(/dashboard/);
   await page.getByLabel("openmenu").click();
   await page.getByRole("menuitem", { name: "Logout" }).click();
-  await expect(page).toHaveURL(/login/);
+  await expect(page).toHaveURL(BASE_URL);
 });
