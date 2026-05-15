@@ -8,15 +8,17 @@ import { Box, Button, Modal, Divider, IconButton, Chip } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 const Profile = (props) => {
-  // props: open, setOpen
+  // props: open, setOpen, setAnchorElUser
   const [profile, setProfile] = React.useState({});
+  const navigate = useNavigate();
 
   const fetchProfile = async () => {
     try {
       const response = await api.get("/auth/profile/");
       setProfile(response.data);
     } catch (error) {
-      alert("Error fetching user profile");
+      // alert("Error fetching user profile");
+      navigate("/login");
     }
   };
 
@@ -26,6 +28,7 @@ const Profile = (props) => {
 
   const handleClose = () => {
     props.setOpen(false);
+    props.setAnchorElUser(null);
   };
 
   return (
