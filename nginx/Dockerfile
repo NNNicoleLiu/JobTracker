@@ -6,7 +6,6 @@ WORKDIR /app
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
-RUN npm run build          # outputs to /app/dist
 
 # Stage 2: Nginx with the built frontend baked in
 FROM nginx:1.25-alpine
