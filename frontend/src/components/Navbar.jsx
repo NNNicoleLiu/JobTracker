@@ -157,11 +157,7 @@ const Navbar = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Profile
-        open={openProfile}
-        setOpen={setOpenProfile}
-        setAnchorElUser={setAnchorElUser}
-      />
+      <Profile open={openProfile} setOpen={setOpenProfile} />
     </>
   );
 };

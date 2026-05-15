@@ -14,6 +14,7 @@ from rest_framework import status
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 
 import os
+from decouple import config
 
 User = get_user_model()
 
@@ -29,7 +30,7 @@ class GoogleLogin(SocialLoginView):
     }
     """
     adapter_class = GoogleOAuth2Adapter
-    callback_url = os.environ.get('GOOGLE_CALLBACK_URL', 'http://localhost:5173')
+    callback_url = config('GOOGLE_CALLBACK_URL', 'http://localhost:5173')
     client_class = OAuth2Client
     
     def post(self, request, *args, **kwargs):
