@@ -11,15 +11,11 @@ const LoginGoogle = () => {
 
   const loginGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      console.log("Google token response:", tokenResponse);
-
       try {
         // Send access_token to backend
         const response = await axios.post(`${config.API_URL}/auth/google/`, {
           access_token: tokenResponse.access_token,
         });
-
-        console.log("response:", response.data);
 
         const { access, refresh } = response.data;
 

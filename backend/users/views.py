@@ -4,8 +4,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
-# from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-# from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 # Google OAuth
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
@@ -14,6 +12,9 @@ from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework import status
 
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
+
+import os
+from decouple import config
 
 User = get_user_model()
 
@@ -29,20 +30,39 @@ class GoogleLogin(SocialLoginView):
     }
     """
     adapter_class = GoogleOAuth2Adapter
-    callback_url = "http://localhost:5173"
+    callback_url = config('GOOGLE_CALLBACK_URL', 'http://localhost:5173')
     client_class = OAuth2Client
     
     def post(self, request, *args, **kwargs):
         # Call parent method to handle Google OAuth
         response = super().post(request, *args, **kwargs)
-        print('response google', response)
         
         # Customize response
-        if response.status_code in [200, 204]:
+        if response.status_code in [200, 201, 204]:
             user = self.user
             
-            refresh = RefreshToken.for_user(user)
+            try:
+                social_account = user.socialaccount_set.filter(
+                    provider='google'
+                ).first()
+
+                if social_account:
+                    google_data = social_account.extra_data
+                    full_name   = google_data.get('name', '')
+                    first_name  = google_data.get('given_name', '')
+                    last_name   = google_data.get('family_name', '')
+                    
+                    name = full_name or f"{first_name} {last_name}".strip()
+
+                    if not user.name == name:
+                        user.name = name
+                        user.save(update_fields=['name'])
+
+            except Exception as e:
+                print(f"Could not populate name from Google data: {e}")
             
+            refresh = RefreshToken.for_user(user)
+
             return Response({
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
