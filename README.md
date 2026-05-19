@@ -228,7 +228,7 @@ jobtracker/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/jobtracker.git
+git clone https://github.com/NNNicoleLiu/JobTracker.git
 cd jobtracker
 
 # 2. Copy environment template and fill in values
