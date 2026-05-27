@@ -25,7 +25,10 @@ const JobEdit = (props) => {
     company: "",
     position: "",
     status: "Applied",
-    applied_at: new Date().toLocaleDateString("en-CA"),
+    applied_at:
+      new Date().toLocaleDateString("en-CA") +
+      "T" +
+      new Date().toLocaleTimeString("en-US", { hour12: false }),
     link: "",
     comment: "",
   });
@@ -53,7 +56,10 @@ const JobEdit = (props) => {
         company: "",
         position: "",
         status: "Applied",
-        applied_at: new Date().toLocaleDateString("en-CA"),
+        applied_at:
+          new Date().toLocaleDateString("en-CA") +
+          "T" +
+          new Date().toLocaleTimeString("en-US", { hour12: false }),
         link: "",
         comment: "",
       });
@@ -101,7 +107,10 @@ const JobEdit = (props) => {
       company: "",
       position: "",
       status: "Applied",
-      applied_at: new Date().toLocaleDateString("en-CA"),
+      applied_at:
+        new Date().toLocaleDateString("en-CA") +
+        "T" +
+        new Date().toLocaleTimeString("en-US", { hour12: false }),
       link: "",
       comment: "",
     });
