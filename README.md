@@ -41,38 +41,41 @@ The project is built with a production-grade architecture: a Dockerized Django R
 ## Tech Stack
 
 ### Backend
-| Technology | Purpose |
-|---|---|
-| **Django** | REST API framework |
-| **Django REST Framework** | API serialization and authentication |
-| **PostgreSQL 15** | Primary database |
-| **Gunicorn** | Production WSGI server |
-| **django-allauth** | Google OAuth integration |
-| **djangorestframework-simplejwt** | JWT token authentication |
-| **django-cors-headers** | Cross-origin request handling |
+
+| Technology                        | Purpose                              |
+| --------------------------------- | ------------------------------------ |
+| **Django**                        | REST API framework                   |
+| **Django REST Framework**         | API serialization and authentication |
+| **PostgreSQL 15**                 | Primary database                     |
+| **Gunicorn**                      | Production WSGI server               |
+| **django-allauth**                | Google OAuth integration             |
+| **djangorestframework-simplejwt** | JWT token authentication             |
+| **django-cors-headers**           | Cross-origin request handling        |
 
 ### Frontend
-| Technology | Purpose |
-|---|---|
-| **React 18** | UI framework |
-| **JavaScript (ES6+)** | Primary language |
-| **Vite** | Build tool and dev server |
+
+| Technology            | Purpose                             |
+| --------------------- | ----------------------------------- |
+| **React 18**          | UI framework                        |
+| **JavaScript (ES6+)** | Primary language                    |
+| **Vite**              | Build tool and dev server           |
 | **Material UI (MUI)** | Component library and design system |
 
 ### Infrastructure
-| Technology | Purpose |
-|---|---|
-| **Docker & Docker Compose** | Containerisation and orchestration |
-| **Nginx** | Reverse proxy, static file serving, SSL termination |
-| **AWS EC2** | Cloud deployment |
-| **GitHub Actions** | CI/CD pipeline |
-| **Playwright** | End-to-end testing |
+
+| Technology                  | Purpose                                             |
+| --------------------------- | --------------------------------------------------- |
+| **Docker & Docker Compose** | Containerisation and orchestration                  |
+| **Nginx**                   | Reverse proxy, static file serving, SSL termination |
+| **AWS EC2**                 | Cloud deployment                                    |
+| **GitHub Actions**          | CI/CD pipeline                                      |
+| **Playwright**              | End-to-end testing                                  |
 
 ---
 
 ## Architecture
 
-``` 
+```
                         Internet
                             │
                             ▼
@@ -130,7 +133,7 @@ Push to main
 │     ├── Copy files + dist/ via SCP      │
 │     ├── Write .env.production from      │
 │     │   GitHub Secrets                  │
-│     └── docker compose up --build      │
+│     └── docker compose up --build       │
 └─────────────────────────────────────────┘
       │
       ▼
@@ -179,6 +182,8 @@ jobtracker/
 │   │   ├── serializers.py
 │   │   ├── views.py
 │   │   └── urls.py
+│   ├── docs/
+│   │   ├── api_documentation.md
 │   ├── manage.py
 │   ├── requirements.txt
 │   ├── .env.example            # template for required environment variables of backend
@@ -319,21 +324,24 @@ VITE_API_URL=http://0.0.0.0:8000
 All endpoints require JWT authentication except login/register.
 
 ### Auth
-| Method | Endpoint | Description | Auth |
-|---|---|---|---|
-| `POST` | `/auth/google/` | Google OAuth login | Public |
-| `POST` | `/auth/logout/` | Logout | Required |
-| `GET` | `/auth/profile/` | Get current user | Required |
+
+| Method | Endpoint         | Description        | Auth     |
+| ------ | ---------------- | ------------------ | -------- |
+| `POST` | `/auth/google/`  | Google OAuth login | Public   |
+| `POST` | `/auth/logout/`  | Logout             | Required |
+| `GET`  | `/auth/profile/` | Get current user   | Required |
 
 ### Jobs
-| Method | Endpoint | Description | Auth |
-|---|---|---|---|
-| `GET` | `/jobs/` | List all applications | Required |
-| `POST` | `/jobs/` | Create application | Required |
-| `PUT` | `/jobs/:id/` | Update application | Required |
-| `DELETE` | `/jobs/:id/` | Delete application | Required |
+
+| Method   | Endpoint     | Description           | Auth     |
+| -------- | ------------ | --------------------- | -------- |
+| `GET`    | `/jobs/`     | List all applications | Required |
+| `POST`   | `/jobs/`     | Create application    | Required |
+| `PUT`    | `/jobs/:id/` | Update application    | Required |
+| `DELETE` | `/jobs/:id/` | Delete application    | Required |
 
 ### Job Status Values
+
 ```
 applied     → Submitted application
 interview   → Interview scheduled or completed
