@@ -75,7 +75,7 @@ const Overview = ({ rows }) => {
     <div style={{ overflowX: "scroll", margin: "0 32px" }}>
       <div
         style={{
-          width: "1300px",
+          width: "1340px",
           margin: "0 auto",
           marginTop: "20px",
           padding: "24px",
@@ -154,7 +154,7 @@ const Overview = ({ rows }) => {
 
       <table
         style={{
-          width: "1300px",
+          width: "1340px",
           margin: "0 auto",
           marginBottom: "40px",
           borderCollapse: "collapse",
@@ -174,24 +174,24 @@ const Overview = ({ rows }) => {
             }}
           >
             <th style={{ width: "50px" }}></th>
-            <th style={{ width: "14%", borderRight: BORDER }}>
+            <th style={{ width: "200px", borderRight: BORDER }}>
               <Box sx={{ ...boxStyle, justifyContent: "flex-start" }}>
                 <BusinessIcon /> &nbsp;Company
               </Box>
             </th>
-            <th style={{ width: "18%", borderRight: BORDER }}>
+            <th style={{ width: "210px", borderRight: BORDER }}>
               <Box sx={boxStyle}>
                 <WorkIcon /> &nbsp;Position
               </Box>
             </th>
-            <th style={{ width: "128px", borderRight: BORDER }}>
+            <th style={{ width: "130px", borderRight: BORDER }}>
               <Box sx={boxStyle}>
                 <FlagIcon /> &nbsp;Status
               </Box>
             </th>
             <th
               style={{
-                width: "188px",
+                width: "192px",
                 borderRight: BORDER,
               }}
             >
@@ -203,7 +203,7 @@ const Overview = ({ rows }) => {
                 </IconButton>
               </Box>
             </th>
-            <th style={{ width: "20%", borderRight: BORDER }}>
+            <th style={{ borderRight: BORDER, width: "290px" }}>
               <Box sx={boxStyle}>
                 <LinkIcon />
                 &nbsp;Link
@@ -256,7 +256,7 @@ const Overview = ({ rows }) => {
                     </Tooltip>
                   )}
                 </td>
-                <td style={{ borderRight: BORDER, overflow: "scroll-x" }}>
+                <td style={{ borderRight: BORDER }}>
                   <p style={{ ...contentStyle, marginLeft: 0 }}>
                     {row[1].company}
                   </p>
@@ -281,7 +281,15 @@ const Overview = ({ rows }) => {
                     sx={{ fontFamily: "Inder, sans-serif", fontSize: "15px" }}
                   />
                 </td>
-                <td style={{ borderRight: BORDER }}>
+                <td
+                  style={{
+                    borderRight: BORDER,
+                    padding: "0 10px",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    textAlign: "left",
+                  }}
+                >
                   <Link
                     href={row[1].link}
                     target="_blank"
@@ -289,12 +297,17 @@ const Overview = ({ rows }) => {
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
+                    sx={{
+                      display: "block",
+                      overflowWrap: "break-word",
+                    }}
                   >
                     {row[1].link}
                   </Link>
-                  <a></a>
                 </td>
-                <td style={{ padding: "4px" }}> {row[1].comment}</td>
+                <td style={{ padding: "4px 10px", textAlign: "left" }}>
+                  {row[1].comment}
+                </td>
               </tr>
             );
           })}
