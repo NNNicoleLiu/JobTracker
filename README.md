@@ -355,5 +355,5 @@ applied     → Submitted application
 interview   → Interview scheduled or completed
 offer       → Received an offer
 rejected    → Application rejected
-rejected    → Application withdrawn
+withdrawn    → Application withdrawn
 ```
