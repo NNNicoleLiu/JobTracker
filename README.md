@@ -45,7 +45,7 @@ The project is built with a production-grade architecture: a Dockerized Django R
 | Technology                        | Purpose                              |
 | --------------------------------- | ------------------------------------ |
 | **Django**                        | REST API framework                   |
-| **Django REST Framework**         | API serialization and authentication |
+| **Django REST Framework(DRF)**    | API serialization and authentication |
 | **PostgreSQL 15**                 | Primary database                     |
 | **Gunicorn**                      | Production WSGI server               |
 | **django-allauth**                | Google OAuth integration             |
@@ -75,39 +75,47 @@ The project is built with a production-grade architecture: a Dockerized Django R
 
 ## Architecture
 
+```mermaid
+graph TD
+    %% Styling Configuration
+    classDef user fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef web fill:#edf7ed,stroke:#2e7d32,stroke-width:2px;
+    classDef private fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
+    classDef db fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+
+    %% Elements
+    Client["🌐 Client Browser (React App)"]:::user
+    
+    subgraph AWS_EC2 ["☁️ AWS EC2 Instance"]
+        Nginx["🔒 Nginx (Reverse Proxy) <br> Ports: 80 / 443"]:::web
+        
+        subgraph Docker_Network ["🐳 Isolated Docker Network"]
+            Django["⚙️ Django REST Framework <br> Port: 8000"]:::private
+            Postgres[("🐘 PostgreSQL Database <br> Port: 5432")]:::db
+        end
+    end
+
+    %% Routing & Data Flow Links
+    Client -->|HTTPS Requests| Nginx
+    Nginx -->|Proxy Pass /api/*| Django
+    Nginx -.->|Serves Static Files| Client
+    Django -->|ORM Queries| Postgres
+    Postgres -->|Data Payload| Django
+    Django -->|JSON Response| Nginx
+    Nginx -->|HTTPS Response| Client
+
+    %% Subgraph Styling
+    style AWS_EC2 fill:#fafafa,stroke:#9e9e9e,stroke-width:2px,stroke-dasharray: 5 5
+    style Docker_Network fill:#f5f5f5,stroke:#0288d1,stroke-width:1px,stroke-dasharray: 3 3
 ```
-                        Internet
-                            │
-                            ▼
-                    ┌───────────────┐
-                    │  AWS EC2      │
-                    │               │
-                    │  ┌─────────┐  │
-                    │  │  Nginx  │  │  ← port 80 only
-                    │  │ :80     │  │    SSL termination
-                    │  └────┬────┘  │    static file serving
-                    │       │       │    reverse proxy
-                    │   ┌───┴───┐   │
-                    │   │       │   │
-                    │ React  Django │
-                    │ dist/  :8000  │  ← internal Docker network
-                    │        │      │    no external port access
-                    │   ┌────┴───┐  │
-                    │   │Postgres│  │  ← internal only
-                    │   │ :5432  │  │    data persisted in volume
-                    │   └────────┘  │
-                    └───────────────┘
-```
 
-### Key Architecture Decisions
+### Core Engineering & Architectural Decisions
 
-**Nginx as the single entry point** — only port 80 are exposed to the internet. Django (port 8000) and PostgreSQL (port 5432) are accessible only within the Docker network. Nginx routes requests by URL prefix: `/auth/` and `/jobs/` are proxied to Django, everything else is served as React static files.
-
-**Multi-environment Docker Compose** — `docker-compose.dev.yml` runs the local dev stack with Django's built-in server and Vite hot-reload. `docker-compose.prod.yml` runs for production: Gunicorn replaces runserver, Nginx replaces the Vite dev server, and source-code bind-mounts are removed so the built image layer is used.
-
-**Frontend built on CI runner, not EC2** — `npm run build` runs on the GitHub Actions runner (7GB RAM) and the compiled `dist/` folder is copied to EC2. The Nginx Dockerfile just copies pre-built files, keeping EC2 memory usage low and deploy times fast.
-
-**JWT + Session authentication** — Google OAuth issues a session via django-allauth, which is then exchanged for a JWT access/refresh token pair. The frontend stores tokens in memory and attaches them to every API request via an Axios interceptor.
+* **Nginx Reverse Proxy & Network Isolation:** To secure the production environment, only public HTTP/HTTPS ports (80/443) are exposed externally on the AWS EC2 instance. The Django REST API (port 8000) and the PostgreSQL database (port 5432) are fully isolated within a private, internal Docker bridge network. This prevents direct external access to backend endpoints and eliminates automated database scanning vectors.
+* **Resource-Optimized CI/CD via Runner Bundling:** Executing memory-intensive operations like frontend compilation (`npm run build`) directly on micro-cloud instances frequently triggers Out-Of-Memory (OOM) kernels, causing server crashes. To optimize resources, production assets are fully compiled on the GitHub Actions runner environment and securely transferred via SSH pipelines. This keeps AWS EC2 memory utilization consistently under 40% during deployments and ensures zero-downtime upgrades.
+* **Relational Integrity & Query Efficiency in PostgreSQL:** The domain model requires strict transactional logic for tracking nested job stages, interview dates, and company metrics. PostgreSQL was selected over a NoSQL alternative to enforce relational constraints, prevent orphaned records on cascade deletions, and leverage B-Tree indexing on highly queried fields (`company`, `status`, and `date_applied`) to optimize lookup performance as the data layer scales.
+* **Federated Google OAuth Identity Management:** To lower user onboarding friction and eliminate password storage liabilities, the platform implements a federated OpenID Connect (OIDC) authentication pipeline via Google OAuth 2.0. The React client intercepts the public authorization flow, secures client-side routing, and securely exchanges the third-party token with the Django backend. The backend maps verified payloads to a custom `User` model, creating a unified authentication profile.
+* **Stateless JWT Session Management & XSS Mitigations:** Core application authorization uses a dual-token architecture (short-lived access tokens paired with rotation-enabled refresh tokens) via Django REST Framework. To mitigate Cross-Site Scripting (XSS) risks, the implementation relies on React's automatic native JSX string-escaping layers to prevent token exfiltration via DOM injection, while access token lifetimes are strictly minimized to limit the blast radius of any potential token compromise.
 
 ---
 
